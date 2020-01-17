@@ -7,9 +7,10 @@
     "type": "git",
     "url": "git://github.com/byteclubfr/js-hal.git"
   },
-  "main": "hal.js",
+  "main": "./dist/hal.js",
   "scripts": {
-    "test": "_mocha -R list -u bdd"
+    "test": "_mocha -R list -u bdd",
+    "build": "rm -rf ./dist/* && tsc hal.ts --outDir ./dist --declaration --target es5"
   },
   "dependencies": {},
   "devDependencies": {
