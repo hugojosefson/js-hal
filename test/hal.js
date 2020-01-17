@@ -33,6 +33,7 @@ describe('HAL', function () {
     });
   });
 
+
   describe('Resource', function () {
     it('should copy attributes', function () {
       var res = new hal.Resource({hello: 'world', who: 'am I'});
