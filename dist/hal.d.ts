@@ -65,7 +65,9 @@ interface IResource {
         [key: string]: IForm | IForm[];
     };
     href: string;
-    link: (link: any) => IResource;
+    link: (rel: string, uri: string) => Resource;
+    embed: (rel: string, resource: any, pluralize?: boolean) => Resource;
+    form: (key: string, value: IFormObject) => Resource;
     [key: string]: any;
 }
 declare class Resource implements IResource {
@@ -88,14 +90,14 @@ declare class Resource implements IResource {
      * @param String uri → href for the <link rel="self"> (can use reserved "href" property instead)
      */
     constructor(object: object, uri?: string);
-    link(link: any): Resource;
+    link(rel: string, uri: string): Resource;
     form(key: string, value: IFormObject): Resource;
     /**
      * Add an embedded resource
      * @param String rel → the relation identifier (should be plural)
      * @param Resource|Resource[] → resource(s) to embed
      */
-    embed(rel: any, resource: any, pluralize: any): Resource;
+    embed(rel: any, resource: any, pluralize?: boolean): Resource;
     /**
      * JSON representation of the resource
      * Requires "JSON.stringify()"

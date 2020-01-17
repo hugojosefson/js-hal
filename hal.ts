@@ -213,7 +213,9 @@ interface IResource {
     _embedded: { [key: string]: IResource | IResource[]; }
     _forms: { [key: string]: IForm | IForm[]; }
     href: string;
-    link: (link) => IResource;
+    link: (rel: string, uri: string) => Resource;
+    embed: (rel: string, resource, pluralize?: boolean) => Resource;
+    form: (key: string, value: IFormObject) => Resource;
     [key: string]: any;
 }
 
@@ -253,13 +255,11 @@ class Resource implements IResource {
 
         // If we have a URI, add this link
         // If not, we won't have a valid object (this may lead to a fatal error later)
-        if (uri) this.link(new Link('self', uri));
+        if (uri) this.link('self', uri);
     }
 
-    link(link): Resource {
-        if (arguments.length > 1) {
-            link = new Link(arguments[0], arguments[1]);
-        }
+    link(rel: string, uri: string): Resource {
+        let link = new Link(rel, uri);
 
         let _links = this._links[link.rel]
         
@@ -295,7 +295,7 @@ class Resource implements IResource {
      * @param String rel → the relation identifier (should be plural)
      * @param Resource|Resource[] → resource(s) to embed
      */
-    embed(rel, resource, pluralize): Resource {
+    embed(rel, resource, pluralize?: boolean): Resource {
         if (typeof pluralize === 'undefined') pluralize = true;
       
         // [Naive pluralize](https://github.com/naholyr/js-hal#why-this-crappy-singularplural-management%E2%80%AF)
