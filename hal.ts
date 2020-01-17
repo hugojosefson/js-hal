@@ -205,24 +205,23 @@ Link.prototype.toJSON = function () {
 };
 
 
-interface IResource {
-    _links: { 
-        self?: ILink;
-        [key: string]: ILink | ILink[];
-    }
-    _embedded: { [key: string]: IResource | IResource[]; }
+interface IResource<T> {
+    _links: { self?: ILink; [key: string]: ILink | ILink[]; }
+    _embedded: { [key: string]: Resource<T> | Resource<T>[]; }
     _forms: { [key: string]: IForm | IForm[]; }
     href: string;
-    link: (rel: string, uri: string) => Resource;
-    embed: (rel: string, resource, pluralize?: boolean) => Resource;
-    form: (key: string, value: IFormObject) => Resource;
+    props: T;
+    link: (rel: string, uri: string) => Resource<T>;
+    embed: (rel: string, resource, pluralize?: boolean) => Resource<T>;
+    form: (key: string, value: IFormObject) => Resource<T>;
     [key: string]: any;
 }
 
-class Resource implements IResource {
+class Resource<T = any> implements IResource<T> {
     href: string;
+    props: T;
     _links: {self?: ILink; [key: string]: ILink | ILink[]; } = {}
-    _embedded: { [key: string]: IResource | IResource[]; } = {}
+    _embedded: { [key: string]: Resource<T> | Resource<T>[]; } = {}
     _forms: { [key: string]: IForm | IForm[]; } = {}
 
     /**
@@ -232,18 +231,19 @@ class Resource implements IResource {
      *                      Do not define "_links" and "_embedded" unless you know what you're doing
      * @param String uri → href for the <link rel="self"> (can use reserved "href" property instead)
      */
-    constructor(object: object, uri?: string) {
+    constructor(object: T, uri?: string) {
         // Initialize _links and _embedded properties
         this._links = {};
         this._embedded = {};
         this._forms = {};
+        this.props = <T>{};
 
         // Copy properties from object
         // we copy AFTER initializing _links and _embedded so that user
         // **CAN** (but should not) overwrite them
         for (var property in object) {
             if (object.hasOwnProperty(property)) {
-            this[property] = object[property];
+                this.props[property] = object[property];
             }
         }
 
@@ -258,7 +258,7 @@ class Resource implements IResource {
         if (uri) this.link('self', uri);
     }
 
-    link(rel: string, uri: string): Resource {
+    link(rel: string, uri: string): Resource<T> {
         let link = new Link(rel, uri);
 
         let _links = this._links[link.rel]
@@ -274,7 +274,7 @@ class Resource implements IResource {
         return this;
     };
 
-    form(key: string, value: IFormObject): Resource {
+    form(key: string, value: IFormObject): Resource<T> {
         let form = new Form(key, value);
         
         let _forms = this._forms[form.key]
@@ -295,7 +295,7 @@ class Resource implements IResource {
      * @param String rel → the relation identifier (should be plural)
      * @param Resource|Resource[] → resource(s) to embed
      */
-    embed(rel, resource, pluralize?: boolean): Resource {
+    embed(rel, resource, pluralize?: boolean): Resource<T> {
         if (typeof pluralize === 'undefined') pluralize = true;
       
         // [Naive pluralize](https://github.com/naholyr/js-hal#why-this-crappy-singularplural-management%E2%80%AF)
@@ -314,11 +314,12 @@ class Resource implements IResource {
       
         // Append resource(s)
         if (Array.isArray(resource)) {
+            //@ts-ignore
           this._embedded[rel] = this._embedded[rel].concat(resource.map(function (object) {
             return new Resource(object);
           }));
         } else {
-          (<Resource>this._embedded[rel]) = new Resource(resource);
+          (<Resource<T>>this._embedded[rel]) = new Resource(resource);
         }
       
         return this;
@@ -354,16 +355,21 @@ class Resource implements IResource {
  * @private
  * @param Resource resource
  */
-function resourceToJsonObject (resource: IResource) {
-  var result:any = {};
+function resourceToJsonObject (resource: Resource) {
+    var result:any = {};
 
-  for (var prop in resource) {
+    if (Object.keys(resource.props).length > 0) {
+        for (var prop in resource.props) {
+            if (resource.props.hasOwnProperty(prop)) {
+                result[prop] = resource[prop];
+            }
+        }
+    }
 
-    if (prop === '_links') {
-        if (Object.keys(resource._links).length > 0) {
+    if (Object.keys(resource._links).length > 0) {
         // Note: we need to copy data to remove "rel" property without corrupting original Link object
         result._links = Object.keys(resource._links).reduce(function (links, rel) {
-            let _links =resource._links[rel];
+            let _links = resource._links[rel];
             let isArray = (arg): arg is Array<ILink> => Array.isArray(arg);
             
             if (isArray(_links)) {
@@ -379,48 +385,41 @@ function resourceToJsonObject (resource: IResource) {
             }
             return links;
         }, {});
-        }
-
-    } else if (prop === '_embedded') {
-        if (Object.keys(resource._embedded).length > 0) {
-            // Note that we do not reformat _embedded
-            // which means we voluntarily DO NOT RESPECT the following constraint:
-            // > Relations with one corresponding Resource/Link have a single object
-            // > value, relations with multiple corresponding HAL elements have an
-            // > array of objects as their value.
-            // Come on, resource one is *really* dumb.
-            result._embedded = {};
-            for (var rel in resource._embedded) {
-                result._embedded[rel] = resource._embedded[rel].map(resourceToJsonObject);
-            }
-        }
-
-    } else if (prop === '_forms') {
-
-        result._forms = Object.keys(resource._forms).reduce((forms, rel) => {
-
-            let _forms =resource._forms[rel];
-            let isArray = (arg): arg is Array<IForm> => Array.isArray(arg);
-            
-            if (isArray(_forms)) {
-                
-                forms[rel] = new Array()
-                for (var i=0; i < _forms.length; i++)
-                forms[rel].push(_forms[i].toJSON())
-
-            } else {
-                var form = _forms.toJSON();
-                forms[rel] = form;
-                delete form.rel;
-            }
-            return forms;
-
-        }, {});
-
-    } else if (resource.hasOwnProperty(prop)) {
-        result[prop] = resource[prop];
     }
-  }
+
+    if (Object.keys(resource._embedded).length > 0) {
+        // Note that we do not reformat _embedded
+        // which means we voluntarily DO NOT RESPECT the following constraint:
+        // > Relations with one corresponding Resource/Link have a single object
+        // > value, relations with multiple corresponding HAL elements have an
+        // > array of objects as their value.
+        // Come on, resource one is *really* dumb.
+        result._embedded = {};
+        for (var rel in resource._embedded) {
+            //@ts-ignore
+            result._embedded[rel] = resource._embedded[rel].map(resourceToJsonObject);
+        }
+    }
+
+    result._forms = Object.keys(resource._forms).reduce((forms, rel) => {
+
+        let _forms =resource._forms[rel];
+        let isArray = (arg): arg is Array<IForm> => Array.isArray(arg);
+        
+        if (isArray(_forms)) {
+            
+            forms[rel] = new Array()
+            for (var i=0; i < _forms.length; i++)
+            forms[rel].push(_forms[i].toJSON())
+
+        } else {
+            var form = _forms.toJSON();
+            forms[rel] = form;
+            delete form.rel;
+        }
+        return forms;
+
+    }, {});
 
   return result;
 }
@@ -441,7 +440,7 @@ function escapeXml (string) {
  * @param String currentIdent → current indentation
  * @param String nextIndent → next indentation
  */
-function resourceToXml (resource: IResource, rel: string, currentIndent, nextIndent) {
+function resourceToXml (resource: Resource, rel: string, currentIndent, nextIndent) {
   // Do not add line feeds if no indentation is asked
   var LF = (currentIndent || nextIndent) ? '\n' : '';
 
@@ -451,6 +450,7 @@ function resourceToXml (resource: IResource, rel: string, currentIndent, nextInd
   // Resource attributes: rel, href, name
   if (rel) xml += ' rel="' + escapeXml(rel) + '"';
   if (resource.href || resource._links.self) xml += ' href="' + escapeXml(resource.href || resource._links.self.href) + '"';
+  //@ts-ignore
   if (resource.name) xml += ' name="' + escapeXml(resource.name) + '"';
   xml += '>' + LF;
 
@@ -464,6 +464,7 @@ function resourceToXml (resource: IResource, rel: string, currentIndent, nextInd
   for (var embed in resource._embedded) {
     // [Naive singularize](https://github.com/naholyr/js-hal#why-this-crappy-singularplural-management%E2%80%AF)
     var rel = embed.replace(/s$/, '');
+    //@ts-ignore
     resource._embedded[embed].forEach(function (res) {
       xml += resourceToXml(res, rel, currentIndent + nextIndent, currentIndent + nextIndent + nextIndent) + LF;
     });

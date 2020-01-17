@@ -53,31 +53,33 @@ interface ILink extends ILinkObject {
  * @param String|Object value → the href, or the hash of all attributes (including href)
  */
 declare function Link(this: ILink, rel: string, value: string | ILinkObject): void;
-interface IResource {
+interface IResource<T> {
     _links: {
         self?: ILink;
         [key: string]: ILink | ILink[];
     };
     _embedded: {
-        [key: string]: IResource | IResource[];
+        [key: string]: Resource<T> | Resource<T>[];
     };
     _forms: {
         [key: string]: IForm | IForm[];
     };
     href: string;
-    link: (rel: string, uri: string) => Resource;
-    embed: (rel: string, resource: any, pluralize?: boolean) => Resource;
-    form: (key: string, value: IFormObject) => Resource;
+    props: T;
+    link: (rel: string, uri: string) => Resource<T>;
+    embed: (rel: string, resource: any, pluralize?: boolean) => Resource<T>;
+    form: (key: string, value: IFormObject) => Resource<T>;
     [key: string]: any;
 }
-declare class Resource implements IResource {
+declare class Resource<T = any> implements IResource<T> {
     href: string;
+    props: T;
     _links: {
         self?: ILink;
         [key: string]: ILink | ILink[];
     };
     _embedded: {
-        [key: string]: IResource | IResource[];
+        [key: string]: Resource<T> | Resource<T>[];
     };
     _forms: {
         [key: string]: IForm | IForm[];
@@ -89,15 +91,15 @@ declare class Resource implements IResource {
      *                      Do not define "_links" and "_embedded" unless you know what you're doing
      * @param String uri → href for the <link rel="self"> (can use reserved "href" property instead)
      */
-    constructor(object: object, uri?: string);
-    link(rel: string, uri: string): Resource;
-    form(key: string, value: IFormObject): Resource;
+    constructor(object: T, uri?: string);
+    link(rel: string, uri: string): Resource<T>;
+    form(key: string, value: IFormObject): Resource<T>;
     /**
      * Add an embedded resource
      * @param String rel → the relation identifier (should be plural)
      * @param Resource|Resource[] → resource(s) to embed
      */
-    embed(rel: any, resource: any, pluralize?: boolean): Resource;
+    embed(rel: any, resource: any, pluralize?: boolean): Resource<T>;
     /**
      * JSON representation of the resource
      * Requires "JSON.stringify()"

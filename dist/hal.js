@@ -143,12 +143,13 @@ var Resource = /** @class */ (function () {
         this._links = {};
         this._embedded = {};
         this._forms = {};
+        this.props = {};
         // Copy properties from object
         // we copy AFTER initializing _links and _embedded so that user
         // **CAN** (but should not) overwrite them
         for (var property in object) {
             if (object.hasOwnProperty(property)) {
-                this[property] = object[property];
+                this.props[property] = object[property];
             }
         }
         // Use uri or object.href to initialize the only required <link>: rel = self
@@ -212,6 +213,7 @@ var Resource = /** @class */ (function () {
         }
         // Append resource(s)
         if (Array.isArray(resource)) {
+            //@ts-ignore
             this._embedded[rel] = this._embedded[rel].concat(resource.map(function (object) {
                 return new Resource(object);
             }));
@@ -256,62 +258,59 @@ exports.Resource = Resource;
  */
 function resourceToJsonObject(resource) {
     var result = {};
-    for (var prop in resource) {
-        if (prop === '_links') {
-            if (Object.keys(resource._links).length > 0) {
-                // Note: we need to copy data to remove "rel" property without corrupting original Link object
-                result._links = Object.keys(resource._links).reduce(function (links, rel) {
-                    var _links = resource._links[rel];
-                    var isArray = function (arg) { return Array.isArray(arg); };
-                    if (isArray(_links)) {
-                        links[rel] = new Array();
-                        for (var i = 0; i < _links.length; i++)
-                            links[rel].push(_links[i].toJSON());
-                    }
-                    else {
-                        var link = _links.toJSON();
-                        links[rel] = link;
-                        delete link.rel;
-                    }
-                    return links;
-                }, {});
+    if (Object.keys(resource.props).length > 0) {
+        for (var prop in resource.props) {
+            if (resource.props.hasOwnProperty(prop)) {
+                result[prop] = resource[prop];
             }
-        }
-        else if (prop === '_embedded') {
-            if (Object.keys(resource._embedded).length > 0) {
-                // Note that we do not reformat _embedded
-                // which means we voluntarily DO NOT RESPECT the following constraint:
-                // > Relations with one corresponding Resource/Link have a single object
-                // > value, relations with multiple corresponding HAL elements have an
-                // > array of objects as their value.
-                // Come on, resource one is *really* dumb.
-                result._embedded = {};
-                for (var rel in resource._embedded) {
-                    result._embedded[rel] = resource._embedded[rel].map(resourceToJsonObject);
-                }
-            }
-        }
-        else if (prop === '_forms') {
-            result._forms = Object.keys(resource._forms).reduce(function (forms, rel) {
-                var _forms = resource._forms[rel];
-                var isArray = function (arg) { return Array.isArray(arg); };
-                if (isArray(_forms)) {
-                    forms[rel] = new Array();
-                    for (var i = 0; i < _forms.length; i++)
-                        forms[rel].push(_forms[i].toJSON());
-                }
-                else {
-                    var form = _forms.toJSON();
-                    forms[rel] = form;
-                    delete form.rel;
-                }
-                return forms;
-            }, {});
-        }
-        else if (resource.hasOwnProperty(prop)) {
-            result[prop] = resource[prop];
         }
     }
+    if (Object.keys(resource._links).length > 0) {
+        // Note: we need to copy data to remove "rel" property without corrupting original Link object
+        result._links = Object.keys(resource._links).reduce(function (links, rel) {
+            var _links = resource._links[rel];
+            var isArray = function (arg) { return Array.isArray(arg); };
+            if (isArray(_links)) {
+                links[rel] = new Array();
+                for (var i = 0; i < _links.length; i++)
+                    links[rel].push(_links[i].toJSON());
+            }
+            else {
+                var link = _links.toJSON();
+                links[rel] = link;
+                delete link.rel;
+            }
+            return links;
+        }, {});
+    }
+    if (Object.keys(resource._embedded).length > 0) {
+        // Note that we do not reformat _embedded
+        // which means we voluntarily DO NOT RESPECT the following constraint:
+        // > Relations with one corresponding Resource/Link have a single object
+        // > value, relations with multiple corresponding HAL elements have an
+        // > array of objects as their value.
+        // Come on, resource one is *really* dumb.
+        result._embedded = {};
+        for (var rel in resource._embedded) {
+            //@ts-ignore
+            result._embedded[rel] = resource._embedded[rel].map(resourceToJsonObject);
+        }
+    }
+    result._forms = Object.keys(resource._forms).reduce(function (forms, rel) {
+        var _forms = resource._forms[rel];
+        var isArray = function (arg) { return Array.isArray(arg); };
+        if (isArray(_forms)) {
+            forms[rel] = new Array();
+            for (var i = 0; i < _forms.length; i++)
+                forms[rel].push(_forms[i].toJSON());
+        }
+        else {
+            var form = _forms.toJSON();
+            forms[rel] = form;
+            delete form.rel;
+        }
+        return forms;
+    }, {});
     return result;
 }
 /**
@@ -340,6 +339,7 @@ function resourceToXml(resource, rel, currentIndent, nextIndent) {
         xml += ' rel="' + escapeXml(rel) + '"';
     if (resource.href || resource._links.self)
         xml += ' href="' + escapeXml(resource.href || resource._links.self.href) + '"';
+    //@ts-ignore
     if (resource.name)
         xml += ' name="' + escapeXml(resource.name) + '"';
     xml += '>' + LF;
@@ -353,6 +353,7 @@ function resourceToXml(resource, rel, currentIndent, nextIndent) {
     for (var embed in resource._embedded) {
         // [Naive singularize](https://github.com/naholyr/js-hal#why-this-crappy-singularplural-management%E2%80%AF)
         var rel = embed.replace(/s$/, '');
+        //@ts-ignore
         resource._embedded[embed].forEach(function (res) {
             xml += resourceToXml(res, rel, currentIndent + nextIndent, currentIndent + nextIndent + nextIndent) + LF;
         });
