@@ -159,12 +159,10 @@ var Resource = /** @class */ (function () {
         // If we have a URI, add this link
         // If not, we won't have a valid object (this may lead to a fatal error later)
         if (uri)
-            this.link(new Link('self', uri));
+            this.link('self', uri);
     }
-    Resource.prototype.link = function (link) {
-        if (arguments.length > 1) {
-            link = new Link(arguments[0], arguments[1]);
-        }
+    Resource.prototype.link = function (rel, uri) {
+        var link = new Link(rel, uri);
         var _links = this._links[link.rel];
         if (typeof _links === "undefined") {
             this._links[link.rel] = link;
