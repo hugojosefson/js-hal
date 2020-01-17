@@ -127,112 +127,130 @@ Link.prototype.toJSON = function () {
         return object;
     }).bind(this), {});
 };
-/**
- * A hypertext resource
- * @param Object object → the base properties
- *                      Define "href" if you choose not to pass parameter "uri"
- *                      Do not define "_links" and "_embedded" unless you know what you're doing
- * @param String uri → href for the <link rel="self"> (can use reserved "href" property instead)
- */
-function Resource(object, uri) {
-    // new Resource(resource) === resource
-    if (object instanceof Resource) {
-        //@ts-ignore
-        return object;
-    }
-    // Still work if "new" is omitted
-    if (!(this instanceof Resource)) {
-        return new Resource(object, uri);
-    }
-    // Initialize _links and _embedded properties
-    this._links = {};
-    this._embedded = {};
-    this._forms = {};
-    // Copy properties from object
-    // we copy AFTER initializing _links and _embedded so that user
-    // **CAN** (but should not) overwrite them
-    for (var property in object) {
-        if (object.hasOwnProperty(property)) {
-            this[property] = object[property];
+var Resource = /** @class */ (function () {
+    /**
+     * A hypertext resource
+     * @param Object object → the base properties
+     *                      Define "href" if you choose not to pass parameter "uri"
+     *                      Do not define "_links" and "_embedded" unless you know what you're doing
+     * @param String uri → href for the <link rel="self"> (can use reserved "href" property instead)
+     */
+    function Resource(object, uri) {
+        this._links = {};
+        this._embedded = {};
+        this._forms = {};
+        // Initialize _links and _embedded properties
+        this._links = {};
+        this._embedded = {};
+        this._forms = {};
+        // Copy properties from object
+        // we copy AFTER initializing _links and _embedded so that user
+        // **CAN** (but should not) overwrite them
+        for (var property in object) {
+            if (object.hasOwnProperty(property)) {
+                this[property] = object[property];
+            }
         }
+        // Use uri or object.href to initialize the only required <link>: rel = self
+        uri = uri || this.href;
+        if (uri === this.href) {
+            delete this.href;
+        }
+        // If we have a URI, add this link
+        // If not, we won't have a valid object (this may lead to a fatal error later)
+        if (uri)
+            this.link(new Link('self', uri));
     }
-    // Use uri or object.href to initialize the only required <link>: rel = self
-    uri = uri || this.href;
-    if (uri === this.href) {
-        delete this.href;
-    }
-    // If we have a URI, add this link
-    // If not, we won't have a valid object (this may lead to a fatal error later)
-    if (uri)
-        this.link(new Link('self', uri));
-}
+    Resource.prototype.link = function (link) {
+        if (arguments.length > 1) {
+            link = new Link(arguments[0], arguments[1]);
+        }
+        var _links = this._links[link.rel];
+        if (typeof _links === "undefined") {
+            this._links[link.rel] = link;
+        }
+        else if (Array.isArray(_links)) {
+            _links.push(link);
+        }
+        else {
+            this._links[link.rel] = [this._links[link.rel], link];
+        }
+        return this;
+    };
+    ;
+    Resource.prototype.form = function (key, value) {
+        var form = new Form(key, value);
+        var _forms = this._forms[form.key];
+        if (typeof this._forms[form.key] === "undefined") {
+            this._forms[form.key] = form;
+        }
+        else if (Array.isArray(_forms)) {
+            _forms.push(form);
+        }
+        else {
+            this._forms[form.key] = [this._forms[form.key], form];
+        }
+        return this;
+    };
+    /**
+     * Add an embedded resource
+     * @param String rel → the relation identifier (should be plural)
+     * @param Resource|Resource[] → resource(s) to embed
+     */
+    Resource.prototype.embed = function (rel, resource, pluralize) {
+        if (typeof pluralize === 'undefined')
+            pluralize = true;
+        // [Naive pluralize](https://github.com/naholyr/js-hal#why-this-crappy-singularplural-management%E2%80%AF)
+        if (pluralize && rel.substring(rel.length - 1) !== 's') {
+            rel += 's';
+        }
+        var _embedded = this._embedded[rel];
+        // Initialize embedded container
+        if (this._embedded[rel] && !Array.isArray(_embedded)) {
+            this._embedded[rel] = [_embedded];
+        }
+        else if (!this._embedded[rel]) {
+            this._embedded[rel] = [];
+        }
+        // Append resource(s)
+        if (Array.isArray(resource)) {
+            this._embedded[rel] = this._embedded[rel].concat(resource.map(function (object) {
+                return new Resource(object);
+            }));
+        }
+        else {
+            this._embedded[rel] = new Resource(resource);
+        }
+        return this;
+    };
+    ;
+    /**
+     * JSON representation of the resource
+     * Requires "JSON.stringify()"
+     * @param String indent → how you want your JSON to be indented
+     */
+    Resource.prototype.toJSON = function (indent) {
+        return resourceToJsonObject(this);
+    };
+    ;
+    /**
+     * XML representation of the resource
+     * @param String indent → how you want your XML to be indented
+     */
+    Resource.prototype.toXML = function (indent) {
+        return resourceToXml(this, null, '', indent || '');
+    };
+    ;
+    /**
+     * Returns the JSON representation indented using tabs
+     */
+    Resource.prototype.toString = function () {
+        return this.toJSON('\t');
+    };
+    ;
+    return Resource;
+}());
 exports.Resource = Resource;
-;
-/**
- * Add a link to a resource
- * @param Link link
- *
- * Alternative usage: function (rel, value)
- * @see Link
- */
-Resource.prototype.link = function (link) {
-    if (arguments.length > 1) {
-        link = new Link(arguments[0], arguments[1]);
-    }
-    if (typeof this._links[link.rel] === "undefined") {
-        this._links[link.rel] = link;
-    }
-    else if (Array.isArray(this._links[link.rel])) {
-        this._links[link.rel].push(link);
-    }
-    else {
-        this._links[link.rel] = [this._links[link.rel], link];
-    }
-    return this;
-};
-Resource.prototype.form = function (key, value) {
-    var form = new Form(key, value);
-    if (typeof this._forms[form.key] === "undefined") {
-        this._forms[form.key] = form;
-    }
-    else if (Array.isArray(this._forms[form.key])) {
-        this._forms[form.key].push(form);
-    }
-    else {
-        this._forms[form.key] = [this._forms[form.key], form];
-    }
-    return this;
-};
-/**
- * Add an embedded resource
- * @param String rel → the relation identifier (should be plural)
- * @param Resource|Resource[] → resource(s) to embed
- */
-Resource.prototype.embed = function (rel, resource, pluralize) {
-    if (typeof pluralize === 'undefined')
-        pluralize = true;
-    // [Naive pluralize](https://github.com/naholyr/js-hal#why-this-crappy-singularplural-management%E2%80%AF)
-    if (pluralize && rel.substring(rel.length - 1) !== 's') {
-        rel += 's';
-    }
-    // Initialize embedded container
-    if (this._embedded[rel] && !Array.isArray(this._embedded[rel])) {
-        this._embedded[rel] = [this._embedded[rel]];
-    }
-    else if (!this._embedded[rel]) {
-        this._embedded[rel] = [];
-    }
-    // Append resource(s)
-    if (Array.isArray(resource)) {
-        this._embedded[rel] = this._embedded[rel].concat(resource.map(function (object) {
-            return new Resource(object);
-        }));
-    }
-    else {
-        this._embedded[rel] = new Resource(resource);
-    }
-    return this;
-};
 /**
  * Convert a resource to a stringifiable anonymous object
  * @private
@@ -276,21 +294,20 @@ function resourceToJsonObject(resource) {
             }
         }
         else if (prop === '_forms') {
-            result._forms = Object.keys(resource._forms).reduce(function (links, rel) {
+            result._forms = Object.keys(resource._forms).reduce(function (forms, rel) {
                 var _forms = resource._forms[rel];
                 var isArray = function (arg) { return Array.isArray(arg); };
                 if (isArray(_forms)) {
-                    links[rel] = new Array();
+                    forms[rel] = new Array();
                     for (var i = 0; i < _forms.length; i++)
-                        links[rel].push(_forms[i].toJSON());
+                        forms[rel].push(_forms[i].toJSON());
                 }
                 else {
-                    var link = _forms.toJSON();
-                    links[rel] = link;
-                    delete link.rel;
+                    var form = _forms.toJSON();
+                    forms[rel] = form;
+                    delete form.rel;
                 }
-                return links;
-                return links;
+                return forms;
             }, {});
         }
         else if (resource.hasOwnProperty(prop)) {
@@ -299,14 +316,6 @@ function resourceToJsonObject(resource) {
     }
     return result;
 }
-/**
- * JSON representation of the resource
- * Requires "JSON.stringify()"
- * @param String indent → how you want your JSON to be indented
- */
-Resource.prototype.toJSON = function (indent) {
-    return resourceToJsonObject(this);
-};
 /**
  * Escape an XML string: encodes double quotes and tag enclosures
  * @private
@@ -360,16 +369,3 @@ function resourceToXml(resource, rel, currentIndent, nextIndent) {
     xml += currentIndent + '</resource>';
     return xml;
 }
-/**
- * XML representation of the resource
- * @param String indent → how you want your XML to be indented
- */
-Resource.prototype.toXML = function (indent) {
-    return resourceToXml(this, null, '', indent || '');
-};
-/**
- * Returns the JSON representation indented using tabs
- */
-Resource.prototype.toString = function () {
-    return this.toJSON('\t');
-};

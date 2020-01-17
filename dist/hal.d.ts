@@ -59,7 +59,7 @@ interface IResource {
         [key: string]: ILink | ILink[];
     };
     _embedded: {
-        [key: string]: IResource[];
+        [key: string]: IResource | IResource[];
     };
     _forms: {
         [key: string]: IForm | IForm[];
@@ -68,14 +68,50 @@ interface IResource {
     link: (link: any) => IResource;
     [key: string]: any;
 }
-/**
- * A hypertext resource
- * @param Object object → the base properties
- *                      Define "href" if you choose not to pass parameter "uri"
- *                      Do not define "_links" and "_embedded" unless you know what you're doing
- * @param String uri → href for the <link rel="self"> (can use reserved "href" property instead)
- */
-declare function Resource(this: IResource, object: any, uri?: string): void;
+declare class Resource implements IResource {
+    href: string;
+    _links: {
+        self?: ILink;
+        [key: string]: ILink | ILink[];
+    };
+    _embedded: {
+        [key: string]: IResource | IResource[];
+    };
+    _forms: {
+        [key: string]: IForm | IForm[];
+    };
+    /**
+     * A hypertext resource
+     * @param Object object → the base properties
+     *                      Define "href" if you choose not to pass parameter "uri"
+     *                      Do not define "_links" and "_embedded" unless you know what you're doing
+     * @param String uri → href for the <link rel="self"> (can use reserved "href" property instead)
+     */
+    constructor(object: object, uri?: string);
+    link(link: any): Resource;
+    form(key: string, value: IFormObject): Resource;
+    /**
+     * Add an embedded resource
+     * @param String rel → the relation identifier (should be plural)
+     * @param Resource|Resource[] → resource(s) to embed
+     */
+    embed(rel: any, resource: any, pluralize: any): Resource;
+    /**
+     * JSON representation of the resource
+     * Requires "JSON.stringify()"
+     * @param String indent → how you want your JSON to be indented
+     */
+    toJSON(indent: any): any;
+    /**
+     * XML representation of the resource
+     * @param String indent → how you want your XML to be indented
+     */
+    toXML(indent: any): string;
+    /**
+     * Returns the JSON representation indented using tabs
+     */
+    toString(): any;
+}
 /**
  * Public API
  */
