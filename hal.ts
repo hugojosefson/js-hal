@@ -330,7 +330,7 @@ class Resource<T = any> implements IResource<T> {
      * Requires "JSON.stringify()"
      * @param String indent → how you want your JSON to be indented
      */
-    toJSON(indent) {
+    toJSON(indent?) {
         return resourceToJsonObject(this);
     };
 
@@ -338,7 +338,7 @@ class Resource<T = any> implements IResource<T> {
      * XML representation of the resource
      * @param String indent → how you want your XML to be indented
      */
-    toXML(indent) {
+    toXML(indent?) {
         return resourceToXml(this, null, '', indent || '');
     };
     

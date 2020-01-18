@@ -105,12 +105,12 @@ declare class Resource<T = any> implements IResource<T> {
      * Requires "JSON.stringify()"
      * @param String indent → how you want your JSON to be indented
      */
-    toJSON(indent: any): any;
+    toJSON(indent?: any): any;
     /**
      * XML representation of the resource
      * @param String indent → how you want your XML to be indented
      */
-    toXML(indent: any): string;
+    toXML(indent?: any): string;
     /**
      * Returns the JSON representation indented using tabs
      */
