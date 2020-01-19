@@ -261,7 +261,7 @@ function resourceToJsonObject(resource) {
     if (Object.keys(resource.props).length > 0) {
         for (var prop in resource.props) {
             if (resource.props.hasOwnProperty(prop)) {
-                result[prop] = resource[prop];
+                result[prop] = resource.props[prop];
             }
         }
     }
@@ -296,21 +296,23 @@ function resourceToJsonObject(resource) {
             result._embedded[rel] = resource._embedded[rel].map(resourceToJsonObject);
         }
     }
-    result._forms = Object.keys(resource._forms).reduce(function (forms, rel) {
-        var _forms = resource._forms[rel];
-        var isArray = function (arg) { return Array.isArray(arg); };
-        if (isArray(_forms)) {
-            forms[rel] = new Array();
-            for (var i = 0; i < _forms.length; i++)
-                forms[rel].push(_forms[i].toJSON());
-        }
-        else {
-            var form = _forms.toJSON();
-            forms[rel] = form;
-            delete form.rel;
-        }
-        return forms;
-    }, {});
+    if (Object.keys(resource._forms).length > 0) {
+        result._forms = Object.keys(resource._forms).reduce(function (forms, rel) {
+            var _forms = resource._forms[rel];
+            var isArray = function (arg) { return Array.isArray(arg); };
+            if (isArray(_forms)) {
+                forms[rel] = new Array();
+                for (var i = 0; i < _forms.length; i++)
+                    forms[rel].push(_forms[i].toJSON());
+            }
+            else {
+                var form = _forms.toJSON();
+                forms[rel] = form;
+                delete form.rel;
+            }
+            return forms;
+        }, {});
+    }
     return result;
 }
 /**

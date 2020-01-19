@@ -361,7 +361,7 @@ function resourceToJsonObject (resource: Resource) {
     if (Object.keys(resource.props).length > 0) {
         for (var prop in resource.props) {
             if (resource.props.hasOwnProperty(prop)) {
-                result[prop] = resource[prop];
+                result[prop] = resource.props[prop];
             }
         }
     }
@@ -401,27 +401,30 @@ function resourceToJsonObject (resource: Resource) {
         }
     }
 
-    result._forms = Object.keys(resource._forms).reduce((forms, rel) => {
+    if (Object.keys(resource._forms).length > 0) {
+        result._forms = Object.keys(resource._forms).reduce((forms, rel) => {
 
-        let _forms =resource._forms[rel];
-        let isArray = (arg): arg is Array<IForm> => Array.isArray(arg);
-        
-        if (isArray(_forms)) {
+            let _forms = resource._forms[rel];
+            let isArray = (arg): arg is Array<IForm> => Array.isArray(arg);
             
-            forms[rel] = new Array()
-            for (var i=0; i < _forms.length; i++)
-            forms[rel].push(_forms[i].toJSON())
+            if (isArray(_forms)) {
+                
+                forms[rel] = new Array()
+                for (var i=0; i < _forms.length; i++)
+                forms[rel].push(_forms[i].toJSON())
+    
+            } else {
+                var form = _forms.toJSON();
+                forms[rel] = form;
+                delete form.rel;
+            }
+            return forms;
+    
+        }, {});
+    }
 
-        } else {
-            var form = _forms.toJSON();
-            forms[rel] = form;
-            delete form.rel;
-        }
-        return forms;
-
-    }, {});
-
-  return result;
+    
+    return result;
 }
 
 /**
