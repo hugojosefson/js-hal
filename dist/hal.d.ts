@@ -22,6 +22,7 @@ interface IFieldObject {
     default?: string | number;
     regex?: RegExp;
     readonly?: boolean;
+    maxLength?: number;
 }
 interface IFormObject {
     action: string;

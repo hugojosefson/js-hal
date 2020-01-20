@@ -72,6 +72,7 @@ interface IFieldObject {
 	default?: string | number;
     regex?: RegExp; // A regular expression (HTML 5 pattern) to be applied to the value of the field.
     readonly?: boolean; // Indicates whether the field is read-only. Defaults to false.
+    maxLength?: number;
 }
 
 interface IFormObject {
