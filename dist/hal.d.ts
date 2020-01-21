@@ -93,7 +93,7 @@ declare class Resource<T = any> implements IResource<T> {
      * @param String uri → href for the <link rel="self"> (can use reserved "href" property instead)
      */
     constructor(object: T, uri?: string);
-    link(rel: string, uri: string): Resource<T>;
+    link(rel: string, value: string | ILinkObject): Resource<T>;
     form(key: string, value: IFormObject): Resource<T>;
     /**
      * Add an embedded resource
