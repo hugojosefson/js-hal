@@ -259,8 +259,8 @@ class Resource<T = any> implements IResource<T> {
         if (uri) this.link('self', uri);
     }
 
-    link(rel: string, uri: string): Resource<T> {
-        let link = new Link(rel, uri);
+    link(rel: string, value: string | ILinkObject): Resource<T> {
+        let link = new Link(rel, value);
 
         let _links = this._links[link.rel]
         

@@ -162,8 +162,8 @@ var Resource = /** @class */ (function () {
         if (uri)
             this.link('self', uri);
     }
-    Resource.prototype.link = function (rel, uri) {
-        var link = new Link(rel, uri);
+    Resource.prototype.link = function (rel, value) {
+        var link = new Link(rel, value);
         var _links = this._links[link.rel];
         if (typeof _links === "undefined") {
             this._links[link.rel] = link;
