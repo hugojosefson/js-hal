@@ -398,7 +398,11 @@ function resourceToJsonObject (resource: Resource) {
         result._embedded = {};
         for (var rel in resource._embedded) {
             //@ts-ignore
-            result._embedded[rel] = resource._embedded[rel].map(resourceToJsonObject);
+            result._embedded[rel] = Array.isArray(resource._embedded[rel]) ? 
+            //@ts-ignore
+                resource._embedded[rel].map(resourceToJsonObject): 
+            //@ts-ignore
+                resourceToJsonObject(resource._embedded[rel])
         }
     }
 
