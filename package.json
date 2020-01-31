@@ -10,12 +10,17 @@
   "main": "./dist/hal.js",
   "scripts": {
     "test": "_mocha -R list -u bdd",
-    "build": "rm -rf ./dist/* && tsc hal.ts --outDir ./dist --declaration --target es5"
+    "build": "rm -rf ./dist/* && tsc ./src/hal.ts --outDir ./dist --declaration --target es5"
   },
   "dependencies": {},
   "devDependencies": {
-    "mocha": "*",
-    "chai": "*"
+    "@types/chai": "^4.2.7",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^13.1.8",
+    "chai": "^4.2.0",
+    "mocha": "^7.0.0",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.7.5"
   },
   "optionalDependencies": {},
   "engines": {
