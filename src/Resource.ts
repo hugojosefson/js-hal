@@ -99,7 +99,7 @@ export default class Resource {
             }
 
         } else {
-          _embedded =  isResource(resource) ? resource : new Resource(resource);
+          _embedded = isResource(resource) ? resource : new Resource(resource);
         }
 
         this._embedded[rel] = _embedded;
@@ -230,5 +230,5 @@ export default class Resource {
 }
 
 function isResource(arg): arg is Resource {
-    return arg._embedded != undefined && arg._links != undefined && arg._props != undefined;
+    return arg && arg._embedded != undefined && arg._links != undefined && arg._props != undefined;
 }

@@ -205,5 +205,5 @@ var Resource = /** @class */ (function () {
 }());
 exports.default = Resource;
 function isResource(arg) {
-    return arg._embedded != undefined && arg._links != undefined && arg._props != undefined;
+    return arg && arg._embedded != undefined && arg._links != undefined && arg._props != undefined;
 }
