@@ -23,6 +23,20 @@ export default class Resource {
         this._forms = {};
         this._props = {};
 
+        if (!object) {
+            throw new Error('Invalid object');
+        }
+
+        if (object._links) {
+            this._links = object._links;
+            delete object._links;
+        }
+
+        if (object._embedded) {
+            this._embedded = object._embedded;
+            delete object._embedded;
+        }
+
         // Copy properties from object
         // we copy AFTER initializing _links and _embedded so that user
         // **CAN** (but should not) overwrite them
