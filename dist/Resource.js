@@ -40,8 +40,10 @@ var Resource = /** @class */ (function () {
                 this._props[property] = object[property];
             }
         }
-        uriTemplateParams = uriTemplateParams || {};
-        uri = urlTemplate.parse(uri).expand(uriTemplateParams);
+        if (uri) {
+            uriTemplateParams = uriTemplateParams || {};
+            uri = urlTemplate.parse(uri).expand(uriTemplateParams);
+        }
         // Use uri or object.href to initialize the only required <link>: rel = self
         uri = uri || this.href;
         if (uri === this.href) {
@@ -53,7 +55,14 @@ var Resource = /** @class */ (function () {
             this.link('self', uri);
         this.toJSON = this.toJSON.bind(this);
     }
-    Resource.prototype.link = function (rel, value) {
+    Resource.prototype.link = function (rel, value, uriTemplateParams) {
+        uriTemplateParams = uriTemplateParams || {};
+        if (typeof value == 'string') {
+            value = urlTemplate.parse(value).expand(uriTemplateParams);
+        }
+        else {
+            value.href = urlTemplate.parse(value.href).expand(uriTemplateParams);
+        }
         var link = new Link_1.default(rel, value);
         var _links = this._links[link.rel];
         if (typeof _links === "undefined") {

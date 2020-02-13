@@ -94,4 +94,33 @@ describe("Resource", () => {
 
         assert.deepEqual(expected, resource.toJSON());
     })
+
+
+    it('Should exand uri template for when calling link() with url string', () => {
+        let expected = {
+            _links: {
+                derp: { href: "/orders/12345" }
+            }
+        };
+
+        let resource = new Resource({});
+        resource.link('derp', '/orders/{id}', {id: 12345})
+        
+        assert.deepEqual(expected, resource.toJSON());
+    })
+
+    it('Should exand uri template for when calling link() with link object', () => {
+        let expected = {
+            _links: {
+                derp: { href: "/orders/12345" }
+            }
+        };
+
+        let resource = new Resource({});
+        resource.link('derp', {
+            href: '/orders/{id}'
+        }, {id: 12345})
+        
+        assert.deepEqual(expected, resource.toJSON());
+    })
 })
