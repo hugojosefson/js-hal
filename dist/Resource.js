@@ -40,9 +40,8 @@ var Resource = /** @class */ (function () {
                 this._props[property] = object[property];
             }
         }
-        if (uriTemplateParams) {
-            uri = urlTemplate.parse(uri).expand(uriTemplateParams);
-        }
+        uriTemplateParams = uriTemplateParams || {};
+        uri = urlTemplate.parse(uri).expand(uriTemplateParams);
         // Use uri or object.href to initialize the only required <link>: rel = self
         uri = uri || this.href;
         if (uri === this.href) {
