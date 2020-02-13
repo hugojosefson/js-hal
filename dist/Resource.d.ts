@@ -20,7 +20,7 @@ export default class Resource {
      *                      Do not define "_links" and "_embedded" unless you know what you're doing
      * @param String uri → href for the <link rel="self"> (can use reserved "href" property instead)
      */
-    constructor(object: any, uri?: string);
+    constructor(object: any, uri?: string, uriTemplateParams?: object);
     link(rel: string, value: string | ILinkObject): Resource;
     form(key: string, value: IFormObject): Resource;
     /**

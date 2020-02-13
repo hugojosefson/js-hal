@@ -1,3 +1,4 @@
+import * as urlTemplate from 'url-template';
 import Link, { ILink, ILinkObject } from './Link';
 import Form, { IForm, IFormObject } from './Form';
 import { escapeXml } from './helpers';
@@ -16,7 +17,7 @@ export default class Resource {
      *                      Do not define "_links" and "_embedded" unless you know what you're doing
      * @param String uri → href for the <link rel="self"> (can use reserved "href" property instead)
      */
-    constructor(object: any, uri?: string) {
+    constructor(object: any, uri?: string, uriTemplateParams?: object) {
         // Initialize _links and _embedded properties
         this._links = {};
         this._embedded = {};
@@ -44,6 +45,10 @@ export default class Resource {
             if (object.hasOwnProperty(property)) {
                 this._props[property] = object[property];
             }
+        }
+
+        if (uriTemplateParams) {
+            uri = urlTemplate.parse(uri).expand(uriTemplateParams);
         }
 
         // Use uri or object.href to initialize the only required <link>: rel = self
