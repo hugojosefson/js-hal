@@ -18,10 +18,11 @@ export default class CollectionResource extends Resource {
         super(args.props);
         let { props, uri, uriTemplateParams } = args;
         let { total, page, size } = props;
-        
-        if (uriTemplateParams) {
-            uri = urlTemplate.parse(uri).expand(uriTemplateParams)
-        }
+
+        uriTemplateParams = uriTemplateParams || {};
+        uriTemplateParams['page'] = page;
+        uriTemplateParams['size'] = size;
+        uri = urlTemplate.parse(uri).expand(uriTemplateParams)
 
         this.embed(args.rel, args.embedded);
         let parsed = parseUrl(uri, true);

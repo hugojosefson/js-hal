@@ -22,9 +22,10 @@ var CollectionResource = /** @class */ (function (_super) {
         var _this = _super.call(this, args.props) || this;
         var props = args.props, uri = args.uri, uriTemplateParams = args.uriTemplateParams;
         var total = props.total, page = props.page, size = props.size;
-        if (uriTemplateParams) {
-            uri = urlTemplate.parse(uri).expand(uriTemplateParams);
-        }
+        uriTemplateParams = uriTemplateParams || {};
+        uriTemplateParams['page'] = page;
+        uriTemplateParams['size'] = size;
+        uri = urlTemplate.parse(uri).expand(uriTemplateParams);
         _this.embed(args.rel, args.embedded);
         var parsed = url_1.parse(uri, true);
         var pathname = parsed.pathname;
