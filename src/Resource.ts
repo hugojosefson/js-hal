@@ -47,9 +47,11 @@ export default class Resource {
             }
         }
 
-        uriTemplateParams = uriTemplateParams || {}
-        uri = urlTemplate.parse(uri).expand(uriTemplateParams);
-
+        if (uri) {
+            uriTemplateParams = uriTemplateParams || {}
+            uri = urlTemplate.parse(uri).expand(uriTemplateParams);
+        }
+        
         // Use uri or object.href to initialize the only required <link>: rel = self
         uri = uri || this.href;
         if (uri === this.href) {
@@ -63,7 +65,14 @@ export default class Resource {
         this.toJSON = this.toJSON.bind(this);
     }
 
-    link(rel: string, value: string | ILinkObject): Resource {
+    link(rel: string, value: string | ILinkObject, uriTemplateParams?: object): Resource {
+        uriTemplateParams = uriTemplateParams || {}
+        if (typeof value == 'string') {
+            value = urlTemplate.parse(value).expand(uriTemplateParams);
+        } else {
+            value.href = urlTemplate.parse(value.href).expand(uriTemplateParams);
+        }
+        
         let link = new Link(rel, value);
 
         let _links = this._links[link.rel]
