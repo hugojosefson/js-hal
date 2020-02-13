@@ -1,2 +1,3 @@
 import Resource from './Resource';
-export { Resource };
+import CollectionResource from './CollectionResource';
+export { Resource, CollectionResource };

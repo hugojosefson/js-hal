@@ -82,5 +82,4 @@ describe("Resource", () => {
 
         assert.deepEqual(resource.toJSON(), expected);
     })
-
 })
