@@ -82,4 +82,16 @@ describe("Resource", () => {
 
         assert.deepEqual(resource.toJSON(), expected);
     })
+
+    it('Should expand uri template', () => {
+        let expected = {
+            _links: {
+                self: { href: "/orders/12345" }
+            }
+        };
+
+        let resource = new Resource({}, '/orders/{id}', {id: 12345});
+
+        assert.deepEqual(expected, resource.toJSON());
+    })
 })

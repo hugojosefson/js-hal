@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var urlTemplate = require("url-template");
 var Link_1 = require("./Link");
 var Form_1 = require("./Form");
 var helpers_1 = require("./helpers");
@@ -11,7 +12,7 @@ var Resource = /** @class */ (function () {
      *                      Do not define "_links" and "_embedded" unless you know what you're doing
      * @param String uri → href for the <link rel="self"> (can use reserved "href" property instead)
      */
-    function Resource(object, uri) {
+    function Resource(object, uri, uriTemplateParams) {
         this._links = {};
         this._embedded = {};
         this._forms = {};
@@ -38,6 +39,9 @@ var Resource = /** @class */ (function () {
             if (object.hasOwnProperty(property)) {
                 this._props[property] = object[property];
             }
+        }
+        if (uriTemplateParams) {
+            uri = urlTemplate.parse(uri).expand(uriTemplateParams);
         }
         // Use uri or object.href to initialize the only required <link>: rel = self
         uri = uri || this.href;

@@ -12,11 +12,14 @@
     "test": "_mocha -R list -u bdd",
     "build": "rm -rf ./dist/* && tsc ./src/hal.ts --outDir ./dist --declaration --target es5"
   },
-  "dependencies": {},
+  "dependencies": {
+    "url-template": "^2.0.8"
+  },
   "devDependencies": {
     "@types/chai": "^4.2.7",
     "@types/mocha": "^5.2.7",
     "@types/node": "^13.1.8",
+    "@types/url-template": "^2.0.28",
     "chai": "^4.2.0",
     "mocha": "^7.0.0",
     "ts-node": "^8.6.2",

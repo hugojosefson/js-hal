@@ -66,7 +66,7 @@ describe("CollectionResource", () => {
         let collectionResource = new CollectionResource({
             embedded: embeddedResources,
             rel: 'orders',
-            url: '/orders',
+            uri: '/orders',
             props: {
                 total: 25,
                 size: 5,
@@ -137,7 +137,7 @@ describe("CollectionResource", () => {
         let collectionResource = new CollectionResource({
             embedded: embeddedResources,
             rel: 'orders',
-            url: '/orders',
+            uri: '/orders',
             props: {
                 total: 25,
                 size: 5,
@@ -208,7 +208,7 @@ describe("CollectionResource", () => {
         let collectionResource = new CollectionResource({
             embedded: embeddedResources,
             rel: 'orders',
-            url: '/orders',
+            uri: '/orders',
             props: {
                 total: 25,
                 size: 5,
@@ -218,5 +218,37 @@ describe("CollectionResource", () => {
         })
 
         assert.deepEqual(collectionResource.toJSON(), expected);
+    })
+
+    it('Should expand uri template', function() {
+        let expected = {
+            _links: {
+                next: { href: "/customer/12345/orders?sort=oldest&page=3&size=10" },
+                prev: { href: "/customer/12345/orders?sort=oldest&page=1&size=10" },
+                self: { href: "/customer/12345/orders?sort=oldest&page=2&size=10" }
+            },
+            page: 2,
+            size: 10,
+            total: 100,
+            _embedded: {
+                orders: []
+            }
+        };
+
+        let resource = new CollectionResource({
+            embedded: [],
+            rel:'orders',
+            uri: '/customer/{id}/orders{?sort}',
+            uriTemplateParams: {
+                id: 12345,
+                sort: "oldest"
+            },
+            props: {
+                total: 100,
+                size: 10,
+                page: 2
+            }
+        })
+        assert.deepEqual(expected, resource.toJSON());
     })
 })

@@ -13,16 +13,20 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+var urlTemplate = require("url-template");
 var Resource_1 = require("./Resource");
 var url_1 = require("url");
 var CollectionResource = /** @class */ (function (_super) {
     __extends(CollectionResource, _super);
     function CollectionResource(args) {
         var _this = _super.call(this, args.props) || this;
-        var props = args.props, url = args.url;
+        var props = args.props, uri = args.uri, uriTemplateParams = args.uriTemplateParams;
         var total = props.total, page = props.page, size = props.size;
+        if (uriTemplateParams) {
+            uri = urlTemplate.parse(uri).expand(uriTemplateParams);
+        }
         _this.embed(args.rel, args.embedded);
-        var parsed = url_1.parse(url, true);
+        var parsed = url_1.parse(uri, true);
         var pathname = parsed.pathname;
         parsed.query['page'] = '' + page;
         parsed.query['size'] = '' + size;
