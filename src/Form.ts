@@ -3,11 +3,6 @@ type FIELD_TYPE_NUMBER = 'number';
 type FIELD_TYPE_HIDDEN = 'hidden';
 type FIELD_TYPE_FILE = 'file';
 
-type FIELD_TYPES = FIELD_TYPE_TEXT | 
-	FIELD_TYPE_NUMBER |
-	FIELD_TYPE_HIDDEN |
-	FIELD_TYPE_FILE;
-
 
 type MEDIA_TYPE_OCTET = 'application/octet-stream';
 type MEDIA_TYPE_JSON = 'application/json';
@@ -29,7 +24,10 @@ type HTTP_METHODS = HTTP_GET | HTTP_POST | HTTP_PUT | HTTP_DELETE | HTTP_PATCH;
 
 interface IFieldObject {
 	name: string; // REQUIRED. Name of the field. If empty or missing, client SHOULD ignore this field object completely.
-	type: FIELD_TYPES; // REQUIRED. Type of the field.
+	type: FIELD_TYPE_TEXT | 
+        FIELD_TYPE_NUMBER |
+        FIELD_TYPE_HIDDEN |
+        FIELD_TYPE_FILE; // REQUIRED. Type of the field.
 	required?: boolean; // Defaults to false.
 	default?: string | number;
     regex?: RegExp; // A regular expression (HTML 5 pattern) to be applied to the value of the field.
