@@ -26,6 +26,7 @@ interface IFieldObject {
     readonly?: boolean;
     maxLength?: number;
     minLength?: number;
+    error?: string;
 }
 export interface IFormObject {
     action: string;
