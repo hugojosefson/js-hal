@@ -25,6 +25,7 @@ interface IFieldObject {
     regex?: RegExp;
     readonly?: boolean;
     maxLength?: number;
+    minLength?: number;
 }
 export interface IFormObject {
     action: string;
