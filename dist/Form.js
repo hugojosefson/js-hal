@@ -13,7 +13,7 @@ function Form(key, value) {
     if (!value.method)
         throw new Error('Form method is requied');
     // TODO check that action and method exist in value
-    var expectedFormAttributes = ['action', 'method', 'type', 'fields'];
+    var expectedFormAttributes = ['action', 'method', 'type', 'fields', 'error'];
     // TODO check that field name and type exists
     var expectedFieldAttributes = ['name', 'type', 'required', 'default', 'regex'];
     for (var attr in value) {
