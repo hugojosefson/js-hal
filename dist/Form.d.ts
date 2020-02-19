@@ -9,11 +9,11 @@ declare type MEDIA_TYPE_HAL = 'application/hal+json';
 declare type MEDIA_TYPE_FORM = 'application/x-www-form-urlencoded';
 declare type MEDIA_TYPE_MULTIPART = 'multipart/form-data';
 declare type MEDIA_TYPES = MEDIA_TYPE_MULTIPART | MEDIA_TYPE_FORM | MEDIA_TYPE_JSON | MEDIA_TYPE_HAL | MEDIA_TYPE_OCTET;
-declare type HTTP_GET = 'GET';
-declare type HTTP_POST = 'POST';
-declare type HTTP_PUT = 'PUT';
-declare type HTTP_DELETE = 'DELETE';
-declare type HTTP_PATCH = 'PATCH';
+declare type HTTP_GET = 'GET' | 'get';
+declare type HTTP_POST = 'POST' | 'post';
+declare type HTTP_PUT = 'PUT' | 'put';
+declare type HTTP_DELETE = 'DELETE' | 'delete';
+declare type HTTP_PATCH = 'PATCH' | 'patch';
 declare type HTTP_METHODS = HTTP_GET | HTTP_POST | HTTP_PUT | HTTP_DELETE | HTTP_PATCH;
 interface IFieldObject {
     name: string;

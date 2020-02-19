@@ -20,11 +20,11 @@ type MEDIA_TYPES = MEDIA_TYPE_MULTIPART |
 					MEDIA_TYPE_HAL | 
 					MEDIA_TYPE_OCTET;
 
-type HTTP_GET = 'GET';
-type HTTP_POST = 'POST';
-type HTTP_PUT = 'PUT';
-type HTTP_DELETE = 'DELETE';
-type HTTP_PATCH = 'PATCH';
+type HTTP_GET = 'GET' | 'get';
+type HTTP_POST = 'POST' | 'post';
+type HTTP_PUT = 'PUT' | 'put';
+type HTTP_DELETE = 'DELETE' | 'delete';
+type HTTP_PATCH = 'PATCH' | 'patch';
 type HTTP_METHODS = HTTP_GET | HTTP_POST | HTTP_PUT | HTTP_DELETE | HTTP_PATCH;
 
 interface IFieldObject {
