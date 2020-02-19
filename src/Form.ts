@@ -47,7 +47,8 @@ export interface IFormObject {
 	action: string; // REQURIED. URI pointing to the action
 	method: HTTP_METHODS; // REQUIRED.
 	type?: MEDIA_TYPES | string; // Default should be application/json
-	fields?: IFieldObject[];
+    fields?: IFieldObject[];
+    error?: string;
 }
 
 export interface IForm extends IFormObject {

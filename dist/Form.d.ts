@@ -33,6 +33,7 @@ export interface IFormObject {
     method: HTTP_METHODS;
     type?: MEDIA_TYPES | string;
     fields?: IFieldObject[];
+    error?: string;
 }
 export interface IForm extends IFormObject {
     key: string;
