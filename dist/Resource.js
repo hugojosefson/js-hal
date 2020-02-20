@@ -58,10 +58,14 @@ var Resource = /** @class */ (function () {
     Resource.prototype.link = function (rel, value, uriTemplateParams) {
         uriTemplateParams = uriTemplateParams || {};
         if (typeof value == 'string') {
-            value = urlTemplate.parse(value).expand(uriTemplateParams);
+            value = uriTemplateParams ?
+                urlTemplate.parse(value).expand(uriTemplateParams)
+                : value;
         }
         else {
-            value.href = urlTemplate.parse(value.href).expand(uriTemplateParams);
+            value.href = uriTemplateParams ?
+                urlTemplate.parse(value.href).expand(uriTemplateParams)
+                : value.href;
         }
         var link = new Link_1.default(rel, value);
         var _links = this._links[link.rel];

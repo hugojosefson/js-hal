@@ -68,9 +68,13 @@ export default class Resource {
     link(rel: string, value: string | ILinkObject, uriTemplateParams?: object): Resource {
         uriTemplateParams = uriTemplateParams || {}
         if (typeof value == 'string') {
-            value = urlTemplate.parse(value).expand(uriTemplateParams);
+            value = uriTemplateParams ? 
+                urlTemplate.parse(value).expand(uriTemplateParams)
+                : value;
         } else {
-            value.href = urlTemplate.parse(value.href).expand(uriTemplateParams);
+            value.href = uriTemplateParams ?
+                urlTemplate.parse(value.href).expand(uriTemplateParams)
+                : value.href;
         }
         
         let link = new Link(rel, value);
