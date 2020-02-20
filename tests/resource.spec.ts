@@ -123,4 +123,19 @@ describe("Resource", () => {
         
         assert.deepEqual(expected, resource.toJSON());
     })
+
+    it('Should not expand uri template if params are not provided', () => {
+        let expected = {
+            _links: {
+                derp: { href: "/orders/{id}" }
+            }
+        };
+
+        let resource = new Resource({});
+        resource.link('derp', {
+            href: '/orders/{id}'
+        })
+        
+        assert.deepEqual(expected, resource.toJSON());
+    })
 })

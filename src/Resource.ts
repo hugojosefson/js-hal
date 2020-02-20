@@ -66,7 +66,6 @@ export default class Resource {
     }
 
     link(rel: string, value: string | ILinkObject, uriTemplateParams?: object): Resource {
-        uriTemplateParams = uriTemplateParams || {}
         if (typeof value == 'string') {
             value = uriTemplateParams ? 
                 urlTemplate.parse(value).expand(uriTemplateParams)

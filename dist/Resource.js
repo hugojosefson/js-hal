@@ -56,7 +56,6 @@ var Resource = /** @class */ (function () {
         this.toJSON = this.toJSON.bind(this);
     }
     Resource.prototype.link = function (rel, value, uriTemplateParams) {
-        uriTemplateParams = uriTemplateParams || {};
         if (typeof value == 'string') {
             value = uriTemplateParams ?
                 urlTemplate.parse(value).expand(uriTemplateParams)
