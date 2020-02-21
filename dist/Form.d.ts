@@ -22,7 +22,7 @@ interface IFieldObject {
     name: string;
     type: FIELD_TYPE_TEXT | FIELD_TYPE_NUMBER | FIELD_TYPE_HIDDEN | FIELD_TYPE_FILE | FIELD_TYPE_EMAIL | FIELD_TYPE_PASSWORD | FIELD_TYPE_CHECKBOX | FIELD_TYPE_TEXTAREA;
     required?: boolean;
-    default?: string | number;
+    default?: string | number | Array<string | number>;
     regex?: RegExp;
     readonly?: boolean;
     maxLength?: number;
