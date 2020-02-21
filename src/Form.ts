@@ -5,7 +5,7 @@ type FIELD_TYPE_FILE = 'file';
 type FIELD_TYPE_EMAIL = 'email';
 type FIELD_TYPE_PASSWORD = 'password';
 type FIELD_TYPE_CHECKBOX = 'checkbox'; // Implicit dependency to HTML ...?
-
+type FIELD_TYPE_TEXTAREA = 'textarea';
 
 type MEDIA_TYPE_OCTET = 'application/octet-stream';
 type MEDIA_TYPE_JSON = 'application/json';
@@ -33,7 +33,8 @@ interface IFieldObject {
         FIELD_TYPE_FILE |
         FIELD_TYPE_EMAIL |
         FIELD_TYPE_PASSWORD |
-        FIELD_TYPE_CHECKBOX; // REQUIRED. Type of the field.
+        FIELD_TYPE_CHECKBOX |
+        FIELD_TYPE_TEXTAREA;// REQUIRED. Type of the field.
 	required?: boolean; // Defaults to false.
 	default?: string | number;
     regex?: RegExp; // A regular expression (HTML 5 pattern) to be applied to the value of the field.
