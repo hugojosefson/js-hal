@@ -35,7 +35,8 @@ export interface IFieldObject {
         FIELD_TYPE_EMAIL |
         FIELD_TYPE_PASSWORD |
         FIELD_TYPE_CHECKBOX |
-        FIELD_TYPE_TEXTAREA;// REQUIRED. Type of the field.
+        FIELD_TYPE_TEXTAREA |
+        FIELD_TYPE_SELECT;// REQUIRED. Type of the field.
 	required?: boolean; // Defaults to false.
     default?: string | number | Array<string | number>;
     selected?: number; // index of the default array
@@ -49,7 +50,7 @@ export interface IFieldObject {
 export interface IFormObject {
 	action: string; // REQURIED. URI pointing to the action
 	method: HTTP_METHODS; // REQUIRED.
-	type?: MEDIA_TYPES | string; // Default should be application/json
+	type?: MEDIA_TYPES; // Default should be application/json
     fields?: IFieldObject[];
     error?: string;
 }

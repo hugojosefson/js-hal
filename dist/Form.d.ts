@@ -6,6 +6,7 @@ declare type FIELD_TYPE_EMAIL = 'email';
 declare type FIELD_TYPE_PASSWORD = 'password';
 declare type FIELD_TYPE_CHECKBOX = 'checkbox';
 declare type FIELD_TYPE_TEXTAREA = 'textarea';
+declare type FIELD_TYPE_SELECT = 'select';
 declare type MEDIA_TYPE_OCTET = 'application/octet-stream';
 declare type MEDIA_TYPE_JSON = 'application/json';
 declare type MEDIA_TYPE_HAL = 'application/hal+json';
@@ -20,7 +21,7 @@ declare type HTTP_PATCH = 'PATCH' | 'patch';
 declare type HTTP_METHODS = HTTP_GET | HTTP_POST | HTTP_PUT | HTTP_DELETE | HTTP_PATCH;
 export interface IFieldObject {
     name: string;
-    type: FIELD_TYPE_TEXT | FIELD_TYPE_NUMBER | FIELD_TYPE_HIDDEN | FIELD_TYPE_FILE | FIELD_TYPE_EMAIL | FIELD_TYPE_PASSWORD | FIELD_TYPE_CHECKBOX | FIELD_TYPE_TEXTAREA;
+    type: FIELD_TYPE_TEXT | FIELD_TYPE_NUMBER | FIELD_TYPE_HIDDEN | FIELD_TYPE_FILE | FIELD_TYPE_EMAIL | FIELD_TYPE_PASSWORD | FIELD_TYPE_CHECKBOX | FIELD_TYPE_TEXTAREA | FIELD_TYPE_SELECT;
     required?: boolean;
     default?: string | number | Array<string | number>;
     selected?: number;
@@ -33,7 +34,7 @@ export interface IFieldObject {
 export interface IFormObject {
     action: string;
     method: HTTP_METHODS;
-    type?: MEDIA_TYPES | string;
+    type?: MEDIA_TYPES;
     fields?: IFieldObject[];
     error?: string;
 }
