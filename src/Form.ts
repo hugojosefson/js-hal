@@ -26,7 +26,7 @@ type HTTP_DELETE = 'DELETE' | 'delete';
 type HTTP_PATCH = 'PATCH' | 'patch';
 type HTTP_METHODS = HTTP_GET | HTTP_POST | HTTP_PUT | HTTP_DELETE | HTTP_PATCH;
 
-interface IFieldObject {
+export interface IFieldObject {
 	name: string; // REQUIRED. Name of the field. If empty or missing, client SHOULD ignore this field object completely.
 	type: FIELD_TYPE_TEXT | 
         FIELD_TYPE_NUMBER |
