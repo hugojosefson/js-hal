@@ -1,3 +1,4 @@
+
 type FIELD_TYPE_TEXT = 'text';
 type FIELD_TYPE_NUMBER = 'number';
 type FIELD_TYPE_HIDDEN = 'hidden';
@@ -8,6 +9,7 @@ type FIELD_TYPE_CHECKBOX = 'checkbox'; // Implicit dependency to HTML ...?
 type FIELD_TYPE_TEXTAREA = 'textarea';
 type FIELD_TYPE_SELECT = 'select';
 
+type MEDIA_TYPE_IMAGE = "image/jpg" | "image/jpeg" | "image/png" | "image/bmp" | "image/gif" | "image/svg+xml";
 type MEDIA_TYPE_OCTET = 'application/octet-stream';
 type MEDIA_TYPE_JSON = 'application/json';
 type MEDIA_TYPE_HAL = 'application/hal+json';
@@ -17,7 +19,8 @@ type MEDIA_TYPES = MEDIA_TYPE_MULTIPART |
 					MEDIA_TYPE_FORM |
 					MEDIA_TYPE_JSON | 
 					MEDIA_TYPE_HAL | 
-					MEDIA_TYPE_OCTET;
+                    MEDIA_TYPE_OCTET |
+                    MEDIA_TYPE_IMAGE;
 
 type HTTP_GET = 'GET' | 'get';
 type HTTP_POST = 'POST' | 'post';
