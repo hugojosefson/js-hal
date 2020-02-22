@@ -37,7 +37,8 @@ interface IFieldObject {
         FIELD_TYPE_CHECKBOX |
         FIELD_TYPE_TEXTAREA;// REQUIRED. Type of the field.
 	required?: boolean; // Defaults to false.
-	default?: string | number | Array<string | number>;
+    default?: string | number | Array<string | number>;
+    selected?: number; // index of the default array
     regex?: RegExp; // A regular expression (HTML 5 pattern) to be applied to the value of the field.
     readonly?: boolean; // Indicates whether the field is read-only. Defaults to false.
     maxLength?: number;
