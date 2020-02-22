@@ -18,7 +18,7 @@ declare type HTTP_PUT = 'PUT' | 'put';
 declare type HTTP_DELETE = 'DELETE' | 'delete';
 declare type HTTP_PATCH = 'PATCH' | 'patch';
 declare type HTTP_METHODS = HTTP_GET | HTTP_POST | HTTP_PUT | HTTP_DELETE | HTTP_PATCH;
-interface IFieldObject {
+export interface IFieldObject {
     name: string;
     type: FIELD_TYPE_TEXT | FIELD_TYPE_NUMBER | FIELD_TYPE_HIDDEN | FIELD_TYPE_FILE | FIELD_TYPE_EMAIL | FIELD_TYPE_PASSWORD | FIELD_TYPE_CHECKBOX | FIELD_TYPE_TEXTAREA;
     required?: boolean;
