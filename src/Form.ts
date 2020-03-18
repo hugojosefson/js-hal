@@ -43,7 +43,7 @@ export interface IFieldObject {
 	required?: boolean; // Defaults to false.
     default?: string | number | Array<string | number>;
     selected?: number; // index of the default array
-    regex?: RegExp; // A regular expression (HTML 5 pattern) to be applied to the value of the field.
+    regex?: string; // A regular expression (HTML 5 pattern) to be applied to the value of the field.
     readonly?: boolean; // Indicates whether the field is read-only. Defaults to false.
     maxLength?: number;
     minLength?: number;

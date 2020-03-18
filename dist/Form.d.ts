@@ -26,7 +26,7 @@ export interface IFieldObject {
     required?: boolean;
     default?: string | number | Array<string | number>;
     selected?: number;
-    regex?: RegExp;
+    regex?: string;
     readonly?: boolean;
     maxLength?: number;
     minLength?: number;
