@@ -30,6 +30,7 @@ export interface IFieldObject {
     readonly?: boolean;
     maxLength?: number;
     minLength?: number;
+    validationMessage?: string;
     error?: string;
 }
 export interface IFormObject {

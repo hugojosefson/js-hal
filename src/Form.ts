@@ -47,6 +47,7 @@ export interface IFieldObject {
     readonly?: boolean; // Indicates whether the field is read-only. Defaults to false.
     maxLength?: number;
     minLength?: number;
+    validationMessage?: string;
     error?: string;
 }
 
