@@ -8,6 +8,8 @@ type FIELD_TYPE_PASSWORD = 'password';
 type FIELD_TYPE_CHECKBOX = 'checkbox'; // Implicit dependency to HTML ...?
 type FIELD_TYPE_TEXTAREA = 'textarea';
 type FIELD_TYPE_SELECT = 'select';
+type FIELD_TYPE_ARRAY = 'array';
+type FIELD_TYPE_OBJECT = 'object';
 
 type MEDIA_TYPE_IMAGE = "image/jpg" | "image/jpeg" | "image/png" | "image/bmp" | "image/gif" | "image/svg+xml";
 type MEDIA_TYPE_OCTET = 'application/octet-stream';
@@ -45,10 +47,12 @@ export interface IFieldObject {
     selected?: number; // index of the default array
     regex?: string; // A regular expression (HTML 5 pattern) to be applied to the value of the field.
     readonly?: boolean; // Indicates whether the field is read-only. Defaults to false.
+    schema?: string; // Schema to be used when type is an Array or Object.
     maxLength?: number;
     minLength?: number;
     validationMessage?: string;
     error?: string;
+    label?: string;
 }
 
 export interface IFormObject {
