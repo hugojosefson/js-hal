@@ -28,10 +28,12 @@ export interface IFieldObject {
     selected?: number;
     regex?: string;
     readonly?: boolean;
+    schema?: string;
     maxLength?: number;
     minLength?: number;
     validationMessage?: string;
     error?: string;
+    label?: string;
 }
 export interface IFormObject {
     action: string;
