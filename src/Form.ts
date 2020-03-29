@@ -41,7 +41,9 @@ export interface IFieldObject {
         FIELD_TYPE_PASSWORD |
         FIELD_TYPE_CHECKBOX |
         FIELD_TYPE_TEXTAREA |
-        FIELD_TYPE_SELECT;// REQUIRED. Type of the field.
+        FIELD_TYPE_SELECT |
+        FIELD_TYPE_ARRAY |
+        FIELD_TYPE_OBJECT;// REQUIRED. Type of the field.
 	required?: boolean; // Defaults to false.
     default?: string | number | Array<string | number>;
     selected?: number; // index of the default array
