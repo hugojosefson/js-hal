@@ -7,6 +7,8 @@ declare type FIELD_TYPE_PASSWORD = 'password';
 declare type FIELD_TYPE_CHECKBOX = 'checkbox';
 declare type FIELD_TYPE_TEXTAREA = 'textarea';
 declare type FIELD_TYPE_SELECT = 'select';
+declare type FIELD_TYPE_ARRAY = 'array';
+declare type FIELD_TYPE_OBJECT = 'object';
 declare type MEDIA_TYPE_IMAGE = "image/jpg" | "image/jpeg" | "image/png" | "image/bmp" | "image/gif" | "image/svg+xml";
 declare type MEDIA_TYPE_OCTET = 'application/octet-stream';
 declare type MEDIA_TYPE_JSON = 'application/json';
@@ -22,7 +24,7 @@ declare type HTTP_PATCH = 'PATCH' | 'patch';
 declare type HTTP_METHODS = HTTP_GET | HTTP_POST | HTTP_PUT | HTTP_DELETE | HTTP_PATCH;
 export interface IFieldObject {
     name: string;
-    type: FIELD_TYPE_TEXT | FIELD_TYPE_NUMBER | FIELD_TYPE_HIDDEN | FIELD_TYPE_FILE | FIELD_TYPE_EMAIL | FIELD_TYPE_PASSWORD | FIELD_TYPE_CHECKBOX | FIELD_TYPE_TEXTAREA | FIELD_TYPE_SELECT;
+    type: FIELD_TYPE_TEXT | FIELD_TYPE_NUMBER | FIELD_TYPE_HIDDEN | FIELD_TYPE_FILE | FIELD_TYPE_EMAIL | FIELD_TYPE_PASSWORD | FIELD_TYPE_CHECKBOX | FIELD_TYPE_TEXTAREA | FIELD_TYPE_SELECT | FIELD_TYPE_ARRAY | FIELD_TYPE_OBJECT;
     required?: boolean;
     default?: string | number | Array<string | number>;
     selected?: number;
