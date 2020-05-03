@@ -85,7 +85,7 @@ export default function Form(this:IForm, key: string, value: IFormObject): void 
     if (!value.method) throw new Error('Form method is requied');
 
 	// TODO check that action and method exist in value
-	var expectedFormAttributes = ['action', 'method', 'type', 'fields', 'error'];
+	var expectedFormAttributes = ['action', 'method', 'type', 'fields', 'error', 'text'];
 
 	// TODO check that field name and type exists
 	var expectedFieldAttributes = ['name', 'type', 'required', 'default', 'regex'];
