@@ -63,6 +63,7 @@ export interface IFormObject {
 	type?: MEDIA_TYPES; // Default should be application/json
     fields?: IFieldObject[];
     error?: string;
+    text?: string; // User friendly text in case the action only requires a button
 }
 
 export interface IForm extends IFormObject {
