@@ -43,6 +43,7 @@ export interface IFormObject {
     type?: MEDIA_TYPES;
     fields?: IFieldObject[];
     error?: string;
+    text?: string;
 }
 export interface IForm extends IFormObject {
     key: string;
