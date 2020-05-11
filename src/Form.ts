@@ -1,7 +1,6 @@
 
 type FIELD_TYPE_TEXT = 'text';
 type FIELD_TYPE_NUMBER = 'number';
-type FIELD_TYPE_HIDDEN = 'hidden';
 type FIELD_TYPE_FILE = 'file';
 type FIELD_TYPE_EMAIL = 'email';
 type FIELD_TYPE_PASSWORD = 'password';
@@ -35,7 +34,6 @@ export interface IFieldObject {
 	name: string; // REQUIRED. Name of the field. If empty or missing, client SHOULD ignore this field object completely.
 	type: FIELD_TYPE_TEXT | 
         FIELD_TYPE_NUMBER |
-        FIELD_TYPE_HIDDEN |
         FIELD_TYPE_FILE |
         FIELD_TYPE_EMAIL |
         FIELD_TYPE_PASSWORD |
@@ -55,6 +53,7 @@ export interface IFieldObject {
     validationMessage?: string;
     error?: string;
     label?: string;
+    hidden?: boolean;
 }
 
 export interface IFormObject {
