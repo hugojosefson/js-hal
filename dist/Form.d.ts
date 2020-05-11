@@ -1,6 +1,5 @@
 declare type FIELD_TYPE_TEXT = 'text';
 declare type FIELD_TYPE_NUMBER = 'number';
-declare type FIELD_TYPE_HIDDEN = 'hidden';
 declare type FIELD_TYPE_FILE = 'file';
 declare type FIELD_TYPE_EMAIL = 'email';
 declare type FIELD_TYPE_PASSWORD = 'password';
@@ -24,7 +23,7 @@ declare type HTTP_PATCH = 'PATCH' | 'patch';
 declare type HTTP_METHODS = HTTP_GET | HTTP_POST | HTTP_PUT | HTTP_DELETE | HTTP_PATCH;
 export interface IFieldObject {
     name: string;
-    type: FIELD_TYPE_TEXT | FIELD_TYPE_NUMBER | FIELD_TYPE_HIDDEN | FIELD_TYPE_FILE | FIELD_TYPE_EMAIL | FIELD_TYPE_PASSWORD | FIELD_TYPE_CHECKBOX | FIELD_TYPE_TEXTAREA | FIELD_TYPE_SELECT | FIELD_TYPE_ARRAY | FIELD_TYPE_OBJECT;
+    type: FIELD_TYPE_TEXT | FIELD_TYPE_NUMBER | FIELD_TYPE_FILE | FIELD_TYPE_EMAIL | FIELD_TYPE_PASSWORD | FIELD_TYPE_CHECKBOX | FIELD_TYPE_TEXTAREA | FIELD_TYPE_SELECT | FIELD_TYPE_ARRAY | FIELD_TYPE_OBJECT;
     required?: boolean;
     default?: string | number | Array<string | number>;
     selected?: number;
@@ -36,6 +35,7 @@ export interface IFieldObject {
     validationMessage?: string;
     error?: string;
     label?: string;
+    hidden?: boolean;
 }
 export interface IFormObject {
     action: string;
