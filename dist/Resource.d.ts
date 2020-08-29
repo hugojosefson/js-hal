@@ -1,17 +1,29 @@
-import { ILink, ILinkObject } from './Link';
-import { IForm, IFormObject } from './Form';
-export default class Resource {
+import Link, { LinkRaw } from './Link';
+import Form, { FormRaw } from './Form';
+declare type ResourceRaw<TProps = {}> = TProps & {
+    _links?: {
+        [key: string]: LinkRaw;
+    };
+    _embedded?: {
+        [key: string]: ResourceRaw;
+    };
+    _forms?: {
+        [key: string]: FormRaw;
+    };
+};
+export default class Resource<TProps extends {
+    [key: string]: any;
+} = {}> {
     href: string;
-    _props: any;
+    _props: TProps;
     _links: {
-        self?: ILink;
-        [key: string]: ILink | ILink[];
+        [key: string]: Link | Array<Link>;
     };
     _embedded: {
-        [key: string]: Resource | Resource[];
+        [key: string]: Resource<any> | Array<Resource<any>>;
     };
     _forms: {
-        [key: string]: IForm | IForm[];
+        [key: string]: Form | Array<Form>;
     };
     /**
      * A hypertext resource
@@ -20,24 +32,19 @@ export default class Resource {
      *                      Do not define "_links" and "_embedded" unless you know what you're doing
      * @param String uri → href for the <link rel="self"> (can use reserved "href" property instead)
      */
-    constructor(object: any, uri?: string, uriTemplateParams?: object);
-    link(rel: string, value: string | ILinkObject, uriTemplateParams?: object): Resource;
-    form(key: string, value: IFormObject): Resource;
+    constructor(props: TProps, uri?: string, uriTemplateParams?: object);
+    addLink(rel: string, value: string | LinkRaw, uriTemplateParams?: object): void;
+    addForm(key: string, value: FormRaw): void;
     /**
      * Add an embedded resource
      * @param String rel → the relation identifier (should be plural)
      * @param Resource|Resource[] → resource(s) to embed
      */
-    embed(rel: any, resource: any): Resource;
+    addEmbedded(rel: any, resource: any): void;
     /**
-     * JSON representation of the resource
-     * Requires "JSON.stringify()"
-     * @param String indent → how you want your JSON to be indented
+     * Returns raw representation of the resource
      */
-    toJSON(): any;
-    /**
-     * XML representation of the resource
-     * @param String indent → how you want your XML to be indented
-     */
-    toXML(rel: string, indent?: string): string;
+    toRaw: () => ResourceRaw<TProps>;
+    static isResource(arg: any): arg is Resource;
 }
+export {};

@@ -75,7 +75,7 @@ describe("CollectionResource", () => {
             }
         })
 
-        assert.deepEqual(collectionResource.toJSON(), expected);
+        assert.deepEqual(collectionResource.toRaw(), expected);
     })
 
     it('Should not have prev link', () => {
@@ -146,7 +146,7 @@ describe("CollectionResource", () => {
             }
         })
 
-        assert.deepEqual(collectionResource.toJSON(), expected);
+        assert.deepEqual(collectionResource.toRaw(), expected);
     })
 
     it('Should not have next link', () => {
@@ -217,7 +217,7 @@ describe("CollectionResource", () => {
             }
         })
 
-        assert.deepEqual(collectionResource.toJSON(), expected);
+        assert.deepEqual(collectionResource.toRaw(), expected);
     })
 
     it('Should expand uri template', function() {
@@ -249,6 +249,6 @@ describe("CollectionResource", () => {
                 page: 2
             }
         })
-        assert.deepEqual(expected, resource.toJSON());
+        assert.deepEqual(expected, resource.toRaw());
     })
 })

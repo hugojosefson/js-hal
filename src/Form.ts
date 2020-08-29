@@ -56,7 +56,7 @@ export interface IFieldObject {
     hidden?: boolean;
 }
 
-export interface IFormObject {
+export type FormRaw = {
 	action: string; // REQURIED. URI pointing to the action
 	method: HTTP_METHODS; // REQUIRED.
 	type?: MEDIA_TYPES; // Default should be application/json
@@ -65,46 +65,52 @@ export interface IFormObject {
     text?: string; // User friendly text in case the action only requires a button
 }
 
-export interface IForm extends IFormObject {
-    key: string;
-    toJSON: () => any;
+
+export default class Form {
+    public key: string;
+    private action: string; // REQURIED. URI pointing to the action
+	private method: HTTP_METHODS; // REQUIRED.
+	private type?: MEDIA_TYPES; // Default should be application/json
+    private fields?: IFieldObject[];
+    private error?: string;
+    private text?: string; // User friendly text in case the action only requires a button
+
+    constructor(key: string, value: FormRaw) {
+        if(!key) throw new Error('Form requires a key');
+
+        this.key = key;
+
+        if (typeof value != 'object') throw new Error('invalid form value');
+
+        if (!value.action) throw new Error('Form action URI is required'); 
+
+        if (!value.method) throw new Error('Form method is requied');
+
+        // TODO check that action and method exist in value
+        var expectedFormAttributes = ['action', 'method', 'type', 'fields', 'error', 'text'];
+
+        // TODO check that field name and type exists
+        var expectedFieldAttributes = ['name', 'type', 'required', 'default', 'regex'];
+
+        for (var attr in value) {
+            if (!~expectedFormAttributes.indexOf(attr)) {
+                continue;
+            }
+
+            this[attr] = value[attr];
+        }
+    }
+
+    toRaw = () => {
+        let raw: FormRaw = {
+            action: this.action,
+            method: this.method,
+            type: this.type,
+            fields: this.fields,
+            error: this.error,
+            text: this.text,
+        }
+      
+        return raw;
+    }
 }
-
-export default function Form(this:IForm, key: string, value: IFormObject): void {
-	if (!(this instanceof Form)) return new Form(key, value);
-
-	if(!key) throw new Error('Form requires a key');
-
-	this.key = key;
-
-	if (typeof value != 'object') throw new Error('invalid form value');
-
-    if (!value.action) throw new Error('Form action URI is required'); 
-
-    if (!value.method) throw new Error('Form method is requied');
-
-	// TODO check that action and method exist in value
-	var expectedFormAttributes = ['action', 'method', 'type', 'fields', 'error', 'text'];
-
-	// TODO check that field name and type exists
-	var expectedFieldAttributes = ['name', 'type', 'required', 'default', 'regex'];
-
-	
-	for (var attr in value) {
-		if (!~expectedFormAttributes.indexOf(attr)) {
-			continue;
-		}
-
-		this[attr] = value[attr];
-	}
-}
-
-Form.prototype.toJSON = function() {
-  // Note: calling "JSON.stringify(this)" will fail as JSON.stringify itself calls toJSON()
-  // We need to copy properties to a new object
-  return Object.keys(this).reduce((function (object, key) {
-    object[key] = this[key];
-    return object;
-  }).bind(this), {});
-}
-

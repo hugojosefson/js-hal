@@ -37,17 +37,23 @@ export interface IFieldObject {
     label?: string;
     hidden?: boolean;
 }
-export interface IFormObject {
+export declare type FormRaw = {
     action: string;
     method: HTTP_METHODS;
     type?: MEDIA_TYPES;
     fields?: IFieldObject[];
     error?: string;
     text?: string;
-}
-export interface IForm extends IFormObject {
+};
+export default class Form {
     key: string;
-    toJSON: () => any;
+    private action;
+    private method;
+    private type?;
+    private fields?;
+    private error?;
+    private text?;
+    constructor(key: string, value: FormRaw);
+    toRaw: () => FormRaw;
 }
-export default function Form(this: IForm, key: string, value: IFormObject): void;
 export {};

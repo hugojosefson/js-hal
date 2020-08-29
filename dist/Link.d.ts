@@ -1,4 +1,4 @@
-export interface ILinkObject {
+export declare type LinkRaw = {
     href: string;
     templated?: boolean;
     type?: string;
@@ -6,15 +6,16 @@ export interface ILinkObject {
     profile?: string;
     title?: string;
     hreflang?: string;
-}
-export interface ILink extends ILinkObject {
+};
+export default class Link {
     rel: string;
-    toJSON: () => any;
-    toXML: () => string;
+    private href;
+    private templated?;
+    private type?;
+    private name?;
+    private profile?;
+    private title?;
+    private hreflang?;
+    constructor(rel: string, value: string | LinkRaw);
+    toRaw: () => LinkRaw;
 }
-/**
- * Link to another hypermedia
- * @param String rel → the relation identifier
- * @param String|Object value → the href, or the hash of all attributes (including href)
- */
-export default function Link(this: ILink, rel: string, value: string | ILinkObject): void;

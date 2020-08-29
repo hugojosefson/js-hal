@@ -1,14 +1,19 @@
 import * as urlTemplate from 'url-template';
-import Link, { ILink, ILinkObject } from './Link';
-import Form, { IForm, IFormObject } from './Form';
-import { escapeXml } from './helpers';
+import Link, { LinkRaw } from './Link';
+import Form, { FormRaw } from './Form';
 
-export default class Resource {
+type ResourceRaw<TProps = {}> = TProps & {
+    _links?: { [key: string]: LinkRaw };
+    _embedded?: { [key: string]: ResourceRaw }
+    _forms?: { [key: string]: FormRaw }
+}
+
+export default class Resource<TProps extends { [key: string] : any } = {}> {
     href: string;
-    _props: any;
-    _links: {self?: ILink; [key: string]: ILink | ILink[]; } = {}
-    _embedded: { [key: string]: Resource | Resource[]; } = {}
-    _forms: { [key: string]: IForm | IForm[]; } = {}
+    _props: TProps;
+    _links: { [key: string]: Link | Array<Link>; } = {}
+    _embedded: { [key: string]: Resource<any> | Array<Resource<any>>; } = {}
+    _forms: { [key: string]: Form | Array<Form>; } = {}
 
     /**
      * A hypertext resource
@@ -17,55 +22,37 @@ export default class Resource {
      *                      Do not define "_links" and "_embedded" unless you know what you're doing
      * @param String uri → href for the <link rel="self"> (can use reserved "href" property instead)
      */
-    constructor(object: any, uri?: string, uriTemplateParams?: object) {
-        // Initialize _links and _embedded properties
+    constructor(props: TProps, uri?: string, uriTemplateParams?: object) {
         this._links = {};
         this._embedded = {};
         this._forms = {};
-        this._props = {};
 
-        if (!object) {
-            throw new Error('Invalid object');
+        if (typeof props != "object") {
+            throw new Error('Invalid props');
         }
 
-        if (object._links) {
-            this._links = object._links;
-            delete object._links;
+        if (props._links) {
+            this._links = props._links;
+            delete props._links;
         }
 
-        if (object._embedded) {
-            this._embedded = object._embedded;
-            delete object._embedded;
+        if (props._embedded) {
+            this._embedded = props._embedded;
+            delete props._embedded;
         }
 
-        // Copy properties from object
-        // we copy AFTER initializing _links and _embedded so that user
-        // **CAN** (but should not) overwrite them
-        for (var property in object) {
-            if (object.hasOwnProperty(property)) {
-                this._props[property] = object[property];
-            }
-        }
+        this._props = props;
 
         if (uri) {
-            uriTemplateParams = uriTemplateParams || {}
-            uri = urlTemplate.parse(uri).expand(uriTemplateParams);
+            uri = urlTemplate.parse(uri).expand(uriTemplateParams || {});
         }
         
-        // Use uri or object.href to initialize the only required <link>: rel = self
-        uri = uri || this.href;
-        if (uri === this.href) {
-            delete this.href;
-        }
-
         // If we have a URI, add this link
         // If not, we won't have a valid object (this may lead to a fatal error later)
-        if (uri) this.link('self', uri);
-
-        this.toJSON = this.toJSON.bind(this);
+        if (uri) this.addLink('self', uri);
     }
 
-    link(rel: string, value: string | ILinkObject, uriTemplateParams?: object): Resource {
+    addLink(rel: string, value: string | LinkRaw, uriTemplateParams?: object) {
         if (typeof value == 'string') {
             value = uriTemplateParams ? 
                 urlTemplate.parse(value).expand(uriTemplateParams)
@@ -80,31 +67,27 @@ export default class Resource {
 
         let _links = this._links[link.rel]
         
-        if (typeof _links === "undefined") {
+        if (!_links) {
             this._links[link.rel] = link;
         } else if (Array.isArray(_links)) {
             _links.push(link)
         } else {
-            this._links[link.rel] = [this._links[link.rel], link]
+            this._links[link.rel] = [_links, link]
         }
-        
-        return this;
     };
 
-    form(key: string, value: IFormObject): Resource {
+    addForm(key: string, value: FormRaw) {
         let form = new Form(key, value);
         
         let _forms = this._forms[form.key]
 
-        if (typeof this._forms[form.key] === "undefined") {
+        if (!_forms) {
             this._forms[form.key] = form;
         } else if (Array.isArray(_forms)) {
             _forms.push(form)
         } else {
-            this._forms[form.key] = [this._forms[form.key], form]
+            this._forms[form.key] = [_forms, form]
         }
-    
-        return this;
     }
 
     /**
@@ -112,14 +95,14 @@ export default class Resource {
      * @param String rel → the relation identifier (should be plural)
      * @param Resource|Resource[] → resource(s) to embed
      */
-    embed(rel, resource): Resource {
+    addEmbedded(rel, resource) {
         let _embedded = this._embedded[rel]
     
         // Append resource(s)
         if (Array.isArray(resource)) {
             
             resource = resource.map((object) => {
-                return isResource(object) ? object : new Resource(object);
+                return Resource.isResource(object) ? object : new Resource(object);
             })
 
             if (_embedded && Array.isArray(_embedded)) {
@@ -129,21 +112,17 @@ export default class Resource {
             }
 
         } else {
-          _embedded = isResource(resource) ? resource : new Resource(resource);
+          _embedded = Resource.isResource(resource) ? resource : new Resource(resource);
         }
 
         this._embedded[rel] = _embedded;
-      
-        return this;
     };
 
     /**
-     * JSON representation of the resource
-     * Requires "JSON.stringify()"
-     * @param String indent → how you want your JSON to be indented
+     * Returns raw representation of the resource
      */
-    toJSON() {
-        var result:any = {};
+    toRaw = (): ResourceRaw<TProps> => {
+        var result: ResourceRaw<TProps> = {} as ResourceRaw<TProps>;
 
         for (var prop in this._props) {
             if (this._props.hasOwnProperty(prop)) {
@@ -156,18 +135,16 @@ export default class Resource {
             result._links = Object.keys(this._links)
                 .reduce((links, rel) => {
                     let _links = this._links[rel];
-                    let isArray = (arg): arg is Array<ILink> => Array.isArray(arg);
+                    let isArray = (arg): arg is Array<Link> => Array.isArray(arg);
                     
                     if (isArray(_links)) {
-                        
                         links[rel] = new Array()
                         for (var i=0; i < _links.length; i++)
-                            links[rel].push(_links[i].toJSON())
+                            links[rel].push(_links[i].toRaw())
 
                     } else {
-                        var link = _links.toJSON();
+                        var link = _links.toRaw();
                         links[rel] = link;
-                        delete link.rel;
                     }
                     return links;
                 }, {});
@@ -179,8 +156,8 @@ export default class Resource {
                 let embedded = this._embedded[rel]
                 
                 result._embedded[rel] = Array.isArray(embedded) ? 
-                    embedded.map(embedded => embedded.toJSON()): 
-                    embedded.toJSON()
+                    embedded.map(embedded => embedded.toRaw()): 
+                    embedded.toRaw()
             }
         }
 
@@ -189,18 +166,17 @@ export default class Resource {
                 .reduce((forms, rel) => {
 
                     let _forms = this._forms[rel];
-                    let isArray = (arg): arg is Array<IForm> => Array.isArray(arg);
+                    let isArray = (arg): arg is Array<Form> => Array.isArray(arg);
                     
                     if (isArray(_forms)) {
                         
                         forms[rel] = new Array()
                         for (var i=0; i < _forms.length; i++)
-                        forms[rel].push(_forms[i].toJSON())
+                        forms[rel].push(_forms[i].toRaw())
             
                     } else {
-                        var form = _forms.toJSON();
+                        var form = _forms.toRaw();
                         forms[rel] = form;
-                        delete form.rel;
                     }
                     return forms;
             
@@ -211,54 +187,7 @@ export default class Resource {
         return result;
     };
 
-    /**
-     * XML representation of the resource
-     * @param String indent → how you want your XML to be indented
-     */
-    toXML(rel: string, indent = '') {
-        // Do not add line feeds if no indentation is asked
-        var LF = indent ? '\n' : '';
-
-        // Resource tag
-        var xml = indent + '<resource';
-
-        // Resource attributes: rel, href, name
-        if (rel) xml += ' rel="' + escapeXml(rel) + '"';
-        if (this.href || this._links.self) xml += ' href="' + escapeXml(this.href || this._links.self.href) + '"';
-        //@ts-ignore
-        if (this.name) xml += ' name="' + escapeXml(this.name) + '"';
-        xml += '>' + LF;
-
-        // Add <link> tags
-        for (var rel in this._links) {
-            if (!this.href && rel === 'self') continue;
-            xml += indent + (<ILink>this._links[rel]).toXML() + LF;
-        }
-
-        // Add embedded
-        for (var embed in this._embedded) {
-            // [Naive singularize](https://github.com/naholyr/js-hal#why-this-crappy-singularplural-management%E2%80%AF)
-            var rel = embed.replace(/s$/, '');
-            //@ts-ignore
-            this._embedded[embed].forEach(function (res) {
-            xml += this.toXML(res, rel, indent, indent) + LF;
-            });
-        }
-
-        // Add properties as tags
-        for (var prop in this) {
-            if (this.hasOwnProperty(prop) && prop !== '_links' && prop !== '_embedded') {
-            xml += indent + '<' + prop + '>' + String(this[prop]) + '</' + prop + '>' + LF;
-            }
-        }
-
-        // Close tag and return the shit
-        xml += indent + '</resource>';
-
-        return xml;
-    };
-}
-
-function isResource(arg): arg is Resource {
-    return arg && arg._embedded != undefined && arg._links != undefined && arg._props != undefined;
+    static isResource(arg): arg is Resource {
+        return arg && arg._embedded != undefined && arg._links != undefined && arg._props != undefined;
+    }
 }

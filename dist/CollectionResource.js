@@ -26,19 +26,19 @@ var CollectionResource = /** @class */ (function (_super) {
         uriTemplateParams['page'] = page;
         uriTemplateParams['size'] = size;
         uri = urlTemplate.parse(uri).expand(uriTemplateParams);
-        _this.embed(args.rel, args.embedded);
+        _this.addEmbedded(args.rel, args.embedded);
         var parsed = url_1.parse(uri, true);
         var pathname = parsed.pathname;
         parsed.query['page'] = '' + page;
         parsed.query['size'] = '' + size;
-        _this.link('self', url_1.format({ pathname: pathname, query: parsed.query }));
+        _this.addLink('self', url_1.format({ pathname: pathname, query: parsed.query }));
         if (total > size * (page + 1)) {
             parsed.query['page'] = '' + (page + 1);
-            _this.link('next', url_1.format({ pathname: pathname, query: parsed.query }));
+            _this.addLink('next', url_1.format({ pathname: pathname, query: parsed.query }));
         }
         if (total > 0 && page > 0) {
             parsed.query['page'] = '' + (page - 1);
-            _this.link('prev', url_1.format({ pathname: pathname, query: parsed.query }));
+            _this.addLink('prev', url_1.format({ pathname: pathname, query: parsed.query }));
         }
         return _this;
     }

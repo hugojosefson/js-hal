@@ -2,17 +2,18 @@ import * as urlTemplate from 'url-template';
 import Resource from './Resource';
 import { format as formatUrl, parse as parseUrl } from 'url';
 
-export default class CollectionResource extends Resource {
+type CollectionResourceProps = {
+    total: number;
+    page: number;
+    size: number;
+}
+
+export default class CollectionResource<TExtraProps = {}> extends Resource<CollectionResourceProps & TExtraProps> {
     constructor(args: {
-        embedded: Resource[];
+        embedded: Array<Resource>;
         rel: string;
         uri: string;
-        props: {
-            total: number;
-            page: number;
-            size: number;
-            [key: string]: any;
-        },
+        props: CollectionResourceProps & TExtraProps,
         uriTemplateParams?: object
     }) {
         super(args.props);
@@ -24,22 +25,22 @@ export default class CollectionResource extends Resource {
         uriTemplateParams['size'] = size;
         uri = urlTemplate.parse(uri).expand(uriTemplateParams)
 
-        this.embed(args.rel, args.embedded);
+        this.addEmbedded(args.rel, args.embedded);
         let parsed = parseUrl(uri, true);
         let pathname = parsed.pathname;
         
         parsed.query['page'] = '' + page;
         parsed.query['size'] = '' + size;
-        this.link('self', formatUrl({ pathname, query: parsed.query }));
+        this.addLink('self', formatUrl({ pathname, query: parsed.query }));
 
         if (total > size * (page + 1)) {
             parsed.query['page'] = '' + (page + 1);
-            this.link('next', formatUrl({ pathname, query: parsed.query }))
+            this.addLink('next', formatUrl({ pathname, query: parsed.query }))
         }
 
         if (total > 0 && page > 0) {
             parsed.query['page'] = '' + (page - 1);
-            this.link('prev', formatUrl({ pathname, query: parsed.query }))
+            this.addLink('prev', formatUrl({ pathname, query: parsed.query }))
         }
     }
 }
