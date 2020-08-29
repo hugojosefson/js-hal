@@ -52,7 +52,7 @@ describe("Resource", () => {
             name: 'parent'
         }, 'http://example.com')
 
-        resource.link('Derp', { href: 'http://example.com/Derp', title: 'derpderp' })
+        resource.addLink('Derp', { href: 'http://example.com/Derp', title: 'derpderp' })
         
         let embeddedObj = new Resource({
             asdf: 'wefwefwef',
@@ -61,7 +61,7 @@ describe("Resource", () => {
             }
         }, 'http://example.com/EmbeddedObj')
 
-        resource.embed('EmbeddedObj', embeddedObj);
+        resource.addEmbedded('EmbeddedObj', embeddedObj);
 
         let embeddedArr = [
             new Resource({
@@ -78,9 +78,9 @@ describe("Resource", () => {
             }, 'http://example.com/EmbeddedObj3')
         ]
 
-        resource.embed('ArrayofResources', embeddedArr)
+        resource.addEmbedded('ArrayofResources', embeddedArr)
 
-        assert.deepEqual(resource.toJSON(), expected);
+        assert.deepEqual(resource.toRaw(), expected);
     })
 
     it('Should expand uri template', () => {
@@ -92,7 +92,7 @@ describe("Resource", () => {
 
         let resource = new Resource({}, '/orders/{id}', {id: 12345});
 
-        assert.deepEqual(expected, resource.toJSON());
+        assert.deepEqual(expected, resource.toRaw());
     })
 
 
@@ -104,9 +104,9 @@ describe("Resource", () => {
         };
 
         let resource = new Resource({});
-        resource.link('derp', '/orders/{id}', {id: 12345})
+        resource.addLink('derp', '/orders/{id}', {id: 12345})
         
-        assert.deepEqual(expected, resource.toJSON());
+        assert.deepEqual(expected, resource.toRaw());
     })
 
     it('Should exand uri template for when calling link() with link object', () => {
@@ -117,11 +117,11 @@ describe("Resource", () => {
         };
 
         let resource = new Resource({});
-        resource.link('derp', {
+        resource.addLink('derp', {
             href: '/orders/{id}'
         }, {id: 12345})
         
-        assert.deepEqual(expected, resource.toJSON());
+        assert.deepEqual(expected, resource.toRaw());
     })
 
     it('Should not expand uri template if params are not provided', () => {
@@ -132,10 +132,10 @@ describe("Resource", () => {
         };
 
         let resource = new Resource({});
-        resource.link('derp', {
+        resource.addLink('derp', {
             href: '/orders/{id}'
         })
         
-        assert.deepEqual(expected, resource.toJSON());
+        assert.deepEqual(expected, resource.toRaw());
     })
 })

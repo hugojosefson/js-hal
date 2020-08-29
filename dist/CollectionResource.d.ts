@@ -1,15 +1,16 @@
 import Resource from './Resource';
-export default class CollectionResource extends Resource {
+declare type CollectionResourceProps = {
+    total: number;
+    page: number;
+    size: number;
+};
+export default class CollectionResource<TExtraProps = {}> extends Resource<CollectionResourceProps & TExtraProps> {
     constructor(args: {
-        embedded: Resource[];
+        embedded: Array<Resource>;
         rel: string;
         uri: string;
-        props: {
-            total: number;
-            page: number;
-            size: number;
-            [key: string]: any;
-        };
+        props: CollectionResourceProps & TExtraProps;
         uriTemplateParams?: object;
     });
 }
+export {};
