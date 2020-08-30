@@ -2,7 +2,7 @@ import * as urlTemplate from 'url-template';
 import Link, { LinkRaw } from './Link';
 import Form, { FormRaw } from './Form';
 
-export type ResourceRaw<TProps = {}> = TProps & {
+export type ResourceRaw<TProps = { [key: string]: any }> = TProps & {
     _links?: { [key: string]: LinkRaw };
     _embedded?: { [key: string]: ResourceRaw }
     _forms?: { [key: string]: FormRaw }

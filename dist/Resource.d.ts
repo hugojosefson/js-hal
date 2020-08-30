@@ -1,6 +1,8 @@
 import { LinkRaw } from './Link';
 import { FormRaw } from './Form';
-export declare type ResourceRaw<TProps = {}> = TProps & {
+export declare type ResourceRaw<TProps = {
+    [key: string]: any;
+}> = TProps & {
     _links?: {
         [key: string]: LinkRaw;
     };
