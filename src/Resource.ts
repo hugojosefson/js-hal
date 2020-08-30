@@ -2,18 +2,18 @@ import * as urlTemplate from 'url-template';
 import Link, { LinkRaw } from './Link';
 import Form, { FormRaw } from './Form';
 
-type ResourceRaw<TProps = {}> = TProps & {
+export type ResourceRaw<TProps = {}> = TProps & {
     _links?: { [key: string]: LinkRaw };
     _embedded?: { [key: string]: ResourceRaw }
     _forms?: { [key: string]: FormRaw }
 }
 
 export default class Resource<TProps extends { [key: string] : any } = {}> {
-    href: string;
-    _props: TProps;
-    _links: { [key: string]: Link | Array<Link>; } = {}
-    _embedded: { [key: string]: Resource<any> | Array<Resource<any>>; } = {}
-    _forms: { [key: string]: Form | Array<Form>; } = {}
+    private href: string;
+    private _props: TProps;
+    private _links: { [key: string]: Link | Array<Link>; } = {}
+    private _embedded: { [key: string]: Resource<any> | Array<Resource<any>>; } = {}
+    private _forms: { [key: string]: Form | Array<Form>; } = {}
 
     /**
      * A hypertext resource
@@ -126,7 +126,9 @@ export default class Resource<TProps extends { [key: string] : any } = {}> {
 
         for (var prop in this._props) {
             if (this._props.hasOwnProperty(prop)) {
-                result[prop] = this._props[prop];
+                let property = this._props[prop];
+
+                result[prop] = Resource.isResource(property) ? property.toRaw() : property
             }
         }
 

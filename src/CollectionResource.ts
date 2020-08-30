@@ -1,19 +1,20 @@
 import * as urlTemplate from 'url-template';
-import Resource from './Resource';
+import Resource, { ResourceRaw } from './Resource';
 import { format as formatUrl, parse as parseUrl } from 'url';
 
-type CollectionResourceProps = {
+type CollectionResourceProps<TItemProps> = {
     total: number;
     page: number;
     size: number;
+    items: Array<Resource<TItemProps>>
 }
 
-export default class CollectionResource<TExtraProps = {}> extends Resource<CollectionResourceProps & TExtraProps> {
+
+export default class CollectionResource<TItemProps, TExtraProps = {}> extends Resource<CollectionResourceProps<TItemProps> & TExtraProps> {
     constructor(args: {
-        embedded: Array<Resource>;
         rel: string;
         uri: string;
-        props: CollectionResourceProps & TExtraProps,
+        props: CollectionResourceProps<TItemProps> & TExtraProps,
         uriTemplateParams?: object
     }) {
         super(args.props);
@@ -25,7 +26,6 @@ export default class CollectionResource<TExtraProps = {}> extends Resource<Colle
         uriTemplateParams['size'] = size;
         uri = urlTemplate.parse(uri).expand(uriTemplateParams)
 
-        this.addEmbedded(args.rel, args.embedded);
         let parsed = parseUrl(uri, true);
         let pathname = parsed.pathname;
         

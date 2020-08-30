@@ -26,7 +26,6 @@ var CollectionResource = /** @class */ (function (_super) {
         uriTemplateParams['page'] = page;
         uriTemplateParams['size'] = size;
         uri = urlTemplate.parse(uri).expand(uriTemplateParams);
-        _this.addEmbedded(args.rel, args.embedded);
         var parsed = url_1.parse(uri, true);
         var pathname = parsed.pathname;
         parsed.query['page'] = '' + page;
