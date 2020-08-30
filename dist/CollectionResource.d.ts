@@ -1,5 +1,5 @@
 import Resource from './Resource';
-declare type CollectionResourceProps<TItem> = {
+export declare type CollectionResourceProps<TItem> = {
     total: number;
     page: number;
     size: number;
@@ -12,4 +12,3 @@ export default class CollectionResource<TItemProps, TExtraProps = {}> extends Re
         uriTemplateParams?: object;
     });
 }
-export {};
