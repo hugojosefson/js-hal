@@ -9,13 +9,7 @@ export declare type LinkRaw = {
 };
 export default class Link {
     rel: string;
-    private href;
-    private templated?;
-    private type?;
-    private name?;
-    private profile?;
-    private title?;
-    private hreflang?;
+    private attributes;
     constructor(rel: string, value: string | LinkRaw);
     toRaw: () => LinkRaw;
 }
