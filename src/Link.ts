@@ -20,7 +20,7 @@ export default class Link {
     profile?: string;
     title?: string;
     hreflang?: string;
-  }
+  } = { href: null }
 
   constructor(rel: string, value: string | LinkRaw) {
     if (!rel) throw new Error('Link requires rel');

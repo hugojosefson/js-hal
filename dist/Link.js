@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Link = /** @class */ (function () {
     function Link(rel, value) {
         var _this = this;
+        this.attributes = { href: null };
         this.toRaw = function () {
             var raw = Object.keys(_this.attributes).reduce(function (raw, attr) {
                 if (_this.attributes[attr]) {
