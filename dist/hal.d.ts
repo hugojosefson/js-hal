@@ -1,3 +1,3 @@
 import Resource, { ResourceRaw } from './Resource';
-import CollectionResource from './CollectionResource';
-export { Resource, ResourceRaw, CollectionResource };
+import CollectionResource, { CollectionResourceProps } from './CollectionResource';
+export { Resource, ResourceRaw, CollectionResource, CollectionResourceProps };

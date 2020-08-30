@@ -2,7 +2,7 @@ import * as urlTemplate from 'url-template';
 import Resource, { ResourceRaw } from './Resource';
 import { format as formatUrl, parse as parseUrl } from 'url';
 
-type CollectionResourceProps<TItem> = {
+export type CollectionResourceProps<TItem> = {
     total: number;
     page: number;
     size: number;
