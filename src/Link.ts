@@ -11,13 +11,16 @@ export type LinkRaw = {
 
 export default class Link {
   public rel: string;
-  private href: string;
-  private templated?: boolean;
-  private type?: string;
-  private name?: string;
-  private profile?: string;
-  private title?: string;
-  private hreflang?: string;
+  
+  private attributes: {
+    href: string;
+    templated?: boolean;
+    type?: string;
+    name?: string;
+    profile?: string;
+    title?: string;
+    hreflang?: string;
+  }
 
   constructor(rel: string, value: string | LinkRaw) {
     if (!rel) throw new Error('Link requires rel');
@@ -34,29 +37,26 @@ export default class Link {
             // Unexpected attribute: ignore it
             continue;
           }
-          this[attr] = value[attr];
+          this.attributes[attr] = value[attr];
         }
       }
     } else {
   
       // value is a scalar: use its value as href
       if (!value) throw new Error('Required <link> attribute "href"');
-      this.href = String(value);
+      this.attributes.href = String(value);
   
     }
   }
 
   toRaw = (): LinkRaw => {
-    let raw: LinkRaw = {
-      href: this.href,
-      templated: this.templated,
-      type: this.type,
-      name: this.name,
-      profile: this.profile,
-      title: this.title,
-      hreflang: this.hreflang,
-    }
-
+    let raw: LinkRaw = Object.keys(this.attributes).reduce((raw, attr) => {
+      if (this.attributes[attr]) {
+        raw[attr] = this.attributes[attr]
+      }
+      return raw;
+    }, { href: this.attributes.href })
+  
     return raw;
   }
 }

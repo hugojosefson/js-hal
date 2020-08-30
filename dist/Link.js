@@ -4,15 +4,12 @@ var Link = /** @class */ (function () {
     function Link(rel, value) {
         var _this = this;
         this.toRaw = function () {
-            var raw = {
-                href: _this.href,
-                templated: _this.templated,
-                type: _this.type,
-                name: _this.name,
-                profile: _this.profile,
-                title: _this.title,
-                hreflang: _this.hreflang,
-            };
+            var raw = Object.keys(_this.attributes).reduce(function (raw, attr) {
+                if (_this.attributes[attr]) {
+                    raw[attr] = _this.attributes[attr];
+                }
+                return raw;
+            }, { href: _this.attributes.href });
             return raw;
         };
         if (!rel)
@@ -29,7 +26,7 @@ var Link = /** @class */ (function () {
                         // Unexpected attribute: ignore it
                         continue;
                     }
-                    this[attr] = value[attr];
+                    this.attributes[attr] = value[attr];
                 }
             }
         }
@@ -37,7 +34,7 @@ var Link = /** @class */ (function () {
             // value is a scalar: use its value as href
             if (!value)
                 throw new Error('Required <link> attribute "href"');
-            this.href = String(value);
+            this.attributes.href = String(value);
         }
     }
     return Link;
