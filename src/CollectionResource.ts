@@ -11,7 +11,6 @@ type CollectionResourceProps<TItem> = {
 
 export default class CollectionResource<TItemProps, TExtraProps = {}> extends Resource<CollectionResourceProps<TItemProps> & TExtraProps> {
     constructor(args: {
-        rel: string;
         uri: string;
         props: CollectionResourceProps<TItemProps> & TExtraProps,
         uriTemplateParams?: object
