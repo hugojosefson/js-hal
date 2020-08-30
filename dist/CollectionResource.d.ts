@@ -1,9 +1,9 @@
 import Resource from './Resource';
-declare type CollectionResourceProps<TItemProps> = {
+declare type CollectionResourceProps<TItem> = {
     total: number;
     page: number;
     size: number;
-    items: Array<Resource<TItemProps>>;
+    items: Array<TItem>;
 };
 export default class CollectionResource<TItemProps, TExtraProps = {}> extends Resource<CollectionResourceProps<TItemProps> & TExtraProps> {
     constructor(args: {

@@ -2,13 +2,12 @@ import * as urlTemplate from 'url-template';
 import Resource, { ResourceRaw } from './Resource';
 import { format as formatUrl, parse as parseUrl } from 'url';
 
-type CollectionResourceProps<TItemProps> = {
+type CollectionResourceProps<TItem> = {
     total: number;
     page: number;
     size: number;
-    items: Array<Resource<TItemProps>>
+    items: Array<TItem>
 }
-
 
 export default class CollectionResource<TItemProps, TExtraProps = {}> extends Resource<CollectionResourceProps<TItemProps> & TExtraProps> {
     constructor(args: {
