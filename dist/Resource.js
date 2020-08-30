@@ -23,7 +23,8 @@ var Resource = /** @class */ (function () {
             var result = {};
             for (var prop in _this._props) {
                 if (_this._props.hasOwnProperty(prop)) {
-                    result[prop] = _this._props[prop];
+                    var property = _this._props[prop];
+                    result[prop] = Resource.isResource(property) ? property.toRaw() : property;
                 }
             }
             if (Object.keys(_this._links).length > 0) {

@@ -1,6 +1,6 @@
-import Link, { LinkRaw } from './Link';
-import Form, { FormRaw } from './Form';
-declare type ResourceRaw<TProps = {}> = TProps & {
+import { LinkRaw } from './Link';
+import { FormRaw } from './Form';
+export declare type ResourceRaw<TProps = {}> = TProps & {
     _links?: {
         [key: string]: LinkRaw;
     };
@@ -14,17 +14,11 @@ declare type ResourceRaw<TProps = {}> = TProps & {
 export default class Resource<TProps extends {
     [key: string]: any;
 } = {}> {
-    href: string;
-    _props: TProps;
-    _links: {
-        [key: string]: Link | Array<Link>;
-    };
-    _embedded: {
-        [key: string]: Resource<any> | Array<Resource<any>>;
-    };
-    _forms: {
-        [key: string]: Form | Array<Form>;
-    };
+    private href;
+    private _props;
+    private _links;
+    private _embedded;
+    private _forms;
     /**
      * A hypertext resource
      * @param Object object → the base properties
@@ -47,4 +41,3 @@ export default class Resource<TProps extends {
     toRaw: () => ResourceRaw<TProps>;
     static isResource(arg: any): arg is Resource;
 }
-export {};
