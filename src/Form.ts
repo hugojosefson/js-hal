@@ -105,10 +105,22 @@ export default class Form {
         let raw: FormRaw = {
             action: this.action,
             method: this.method,
-            type: this.type,
-            fields: this.fields,
-            error: this.error,
-            text: this.text,
+        }
+
+        if (this.type) {
+            raw.type = this.type;
+        }
+
+        if (this.fields) {
+            raw.fields = this.fields;
+        }
+
+        if (this.error) {
+            raw.error = this.error;
+        }
+
+        if (this.text) {
+            raw.text = this.text;
         }
       
         return raw;

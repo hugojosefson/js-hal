@@ -7,11 +7,19 @@ var Form = /** @class */ (function () {
             var raw = {
                 action: _this.action,
                 method: _this.method,
-                type: _this.type,
-                fields: _this.fields,
-                error: _this.error,
-                text: _this.text,
             };
+            if (_this.type) {
+                raw.type = _this.type;
+            }
+            if (_this.fields) {
+                raw.fields = _this.fields;
+            }
+            if (_this.error) {
+                raw.error = _this.error;
+            }
+            if (_this.text) {
+                raw.text = _this.text;
+            }
             return raw;
         };
         if (!key)
