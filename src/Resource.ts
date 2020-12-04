@@ -2,9 +2,9 @@ import * as urlTemplate from 'url-template';
 import Link, { LinkRaw } from './Link';
 import Form, { FormRaw } from './Form';
 
-export type ResourceRaw<TProps = { [key: string]: any }> = TProps & {
+export type ResourceRaw<TProps = { [key: string]: any }, TEmbedded = { [key: string]: ResourceRaw }> = TProps & {
     _links?: { [key: string]: LinkRaw };
-    _embedded?: { [key: string]: ResourceRaw }
+    _embedded?: TEmbedded;
     _forms?: { [key: string]: FormRaw }
 }
 
@@ -190,6 +190,6 @@ export default class Resource<TProps extends { [key: string] : any } = {}> {
     };
 
     static isResource(arg): arg is Resource {
-        return arg && arg._embedded != undefined && arg._links != undefined && arg._props != undefined;
+        return arg instanceof Resource;
     }
 }
