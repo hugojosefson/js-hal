@@ -2,13 +2,13 @@ import { LinkRaw } from './Link';
 import { FormRaw } from './Form';
 export declare type ResourceRaw<TProps = {
     [key: string]: any;
+}, TEmbedded = {
+    [key: string]: ResourceRaw;
 }> = TProps & {
     _links?: {
         [key: string]: LinkRaw;
     };
-    _embedded?: {
-        [key: string]: ResourceRaw;
-    };
+    _embedded?: TEmbedded;
     _forms?: {
         [key: string]: FormRaw;
     };
@@ -40,6 +40,10 @@ export default class Resource<TProps extends {
     /**
      * Returns raw representation of the resource
      */
-    toRaw: () => ResourceRaw<TProps>;
+    toRaw: () => ResourceRaw<TProps, {
+        [key: string]: ResourceRaw<{
+            [key: string]: any;
+        }, any>;
+    }>;
     static isResource(arg: any): arg is Resource;
 }

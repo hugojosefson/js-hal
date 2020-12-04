@@ -159,7 +159,7 @@ var Resource = /** @class */ (function () {
     };
     ;
     Resource.isResource = function (arg) {
-        return arg && arg._embedded != undefined && arg._links != undefined && arg._props != undefined;
+        return arg instanceof Resource;
     };
     return Resource;
 }());
