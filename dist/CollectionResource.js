@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -26,18 +28,18 @@ var CollectionResource = /** @class */ (function (_super) {
         uriTemplateParams['page'] = page;
         uriTemplateParams['size'] = size;
         uri = urlTemplate.parse(uri).expand(uriTemplateParams);
-        var parsed = url_1.parse(uri, true);
+        var parsed = (0, url_1.parse)(uri, true);
         var pathname = parsed.pathname;
         parsed.query['page'] = '' + page;
         parsed.query['size'] = '' + size;
-        _this.addLink('self', url_1.format({ pathname: pathname, query: parsed.query }));
+        _this.addLink('self', (0, url_1.format)({ pathname: pathname, query: parsed.query }));
         if (total > size * (page + 1)) {
             parsed.query['page'] = '' + (page + 1);
-            _this.addLink('next', url_1.format({ pathname: pathname, query: parsed.query }));
+            _this.addLink('next', (0, url_1.format)({ pathname: pathname, query: parsed.query }));
         }
         if (total > 0 && page > 0) {
             parsed.query['page'] = '' + (page - 1);
-            _this.addLink('prev', url_1.format({ pathname: pathname, query: parsed.query }));
+            _this.addLink('prev', (0, url_1.format)({ pathname: pathname, query: parsed.query }));
         }
         return _this;
     }

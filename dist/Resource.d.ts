@@ -40,10 +40,6 @@ export default class Resource<TProps extends {
     /**
      * Returns raw representation of the resource
      */
-    toRaw: () => ResourceRaw<TProps, {
-        [key: string]: ResourceRaw<{
-            [key: string]: any;
-        }, any>;
-    }>;
+    toRaw: () => ResourceRaw<TProps>;
     static isResource(arg: any): arg is Resource;
 }
