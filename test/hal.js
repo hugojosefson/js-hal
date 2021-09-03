@@ -58,13 +58,23 @@ describe('HAL', function () {
       expect(res._links).to.have.property('edit');
       expect(res._links.edit.href).to.equal('/edit');
     });
-    it('should embed resource', function () {
+    it('should embed single resource', function () {
       var res = new hal.Resource({}, 'href');
       var sub = new hal.Resource({}, 'href2');
       expect(res.embed.bind(res, 'subs', sub)).to.not.throw(Error);
       expect(res._embedded).to.have.property('subs');
+      expect(res._embedded.subs).to.be.an.instanceOf(hal.Resource);
+      expect(res._embedded.subs._links.self.href).to.equal('href2');
+    });
+
+    it('should embed multiple resources as array', function () {
+      var res = new hal.Resource({}, 'href');
+      var sub2 = new hal.Resource({}, 'href2');
+      var sub3 = new hal.Resource({}, 'href3');
+      expect(res.embed.bind(res, 'subs', [sub2, sub3])).to.not.throw(Error);
+      expect(res._embedded).to.have.property('subs');
       expect(res._embedded.subs).to.be.an('array');
-      expect(res._embedded.subs).to.have.length(1);
+      expect(res._embedded.subs).to.have.length(2);
     });
 
     describe('String representation', function () {
